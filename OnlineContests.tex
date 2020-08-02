@@ -67,7 +67,7 @@ void minimumBribes(vector<int> q) {
 	 \par We define $index_i$ as the current index of number $i$. Suppose we have $n$ numbers, so $1 \le index_i \le n$. The goal is to have $index_i = i$. Without losing generality suppose $i < j \land index_i = j$. There are two cases to consider:
 	 \begin{enumerate}
 	 	\item If $index_j = i$, then by swapping $arr_i$ and $arr_j$, we put both $i$ and $j$ in their corresponding positions.
-	 	\item If $index_j = k \land k \ne i \land k \ne j$. Also suppose $arr_i = x$. In this case by swapping $arr_i$ and $arr_j$ we only put $i$ in its corresponding position. So we need at most two other extra swaps to put $x$ and $j$ to their corresponding positions. It can be only one extra swap if $x = k$.
+	 	\item If $index_j = k \land k \ne i \land k \ne j$. In this case by swapping $arr_i$ and $arr_j$ we only put $i$ in its corresponding position. So we need to do an extra swap to put $j$ in its correct position.
 	 \end{enumerate}
  	We can start from $i = 1$ to $i = n$ and make sure $i$ is in correct position; otherwise we perform a swap. In each iteration we fix the position of one or two numbers. A good example is \{4, 3, 2, 1\}.
  	
