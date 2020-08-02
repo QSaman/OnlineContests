@@ -64,6 +64,7 @@ void minimumBribes(vector<int> q) {
 	 
 	 \section{Minimum Swaps 2}
 	 See the problem statement in this \href{https://www.hackerrank.com/challenges/minimum-swaps-2/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=arrays}{link}.
+ 	\par Note that this solution is based on \href{https://en.wikipedia.org/wiki/Selection_sort}{Selection Sort} in which the number of swaps are minimum. According to Wikipedia: "One thing which distinguishes selection sort from other sorting algorithms is that it makes the minimum possible number of swaps, n − 1 in the worst case.". Altourh Selection sort has minimum number of swaps among all sorts agorithms, it has $O(n^2)$ comparisons. Since the final result is $\{1, 2, \dots, n\}$, it's like we have the set in sorted order so we can bypass comparisons and use Selection Sort advantage which is the minimum number of swaps.
 	 \par We define $index_i$ as the current index of number $i$. Suppose we have $n$ numbers, so $1 \le index_i \le n$. The goal is to have $index_i = i$. Without losing generality suppose $i < j \land index_i = j$. There are two cases to consider:
 	 \begin{enumerate}
 	 	\item If $index_j = i$, then by swapping $arr_i$ and $arr_j$, we put both $i$ and $j$ in their corresponding positions.
