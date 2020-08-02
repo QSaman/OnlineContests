@@ -1,0 +1,64 @@
+\documentclass{book} 
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{placeins}
+\usepackage{amssymb}
+\usepackage{listings}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{snakes}
+\usetikzlibrary{decorations.pathmorphing}
+
+\hypersetup{
+	colorlinks,
+	citecolor=black,
+	filecolor=black,
+	linkcolor=black,
+	urlcolor=black
+}
+
+\title{Online Contests Solutions}
+\author{Saman Saadi}
+\date{} 
+
+\begin{document}
+	\frontmatter
+	\maketitle
+%	\newpage
+	\tableofcontents
+	\mainmatter
+	\chapter{HackerRank}
+	\section{New Year Chaos}
+	 You can find the question in this \href{https://www.hackerrank.com/challenges/new-year-chaos/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=arrays}{link}.
+	 \par We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
+	 \begin{lstlisting}
+void minimumBribes(vector<int> q) {
+
+    const auto& n = q.size();
+    int res = 0;
+    for (int num = n; num > 0; --num)
+    {
+        for (int i = max(0, num - 3); i < num - 1; ++i)
+        {
+            if (q[i] == num)
+            {
+                ++res;
+                swap(q[i], q[i + 1]);
+            }
+        }
+        if (q[num - 1] != num)
+        {
+            cout << "Too chaotic" << endl;
+            return;
+        }
+    }
+    cout << res << endl;
+}
+	 \end{lstlisting}
+\end{document}

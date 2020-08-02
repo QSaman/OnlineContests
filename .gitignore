@@ -1,0 +1,9 @@
+*.aux
+*.log
+*.synctex.gz
+*.toc
+*.out
+*.directory
+*.dvi
+*.pyg
+*.swp
