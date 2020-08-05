@@ -94,4 +94,49 @@ void minimumBribes(vector<int> q) {
     return cnt;
 }
  	\end{lstlisting}
+ 	\section{Count Triplets}
+ 	\href{https://www.hackerrank.com/challenges/count-triplets-1/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=dictionaries-hashmaps}{Problem statement}.
+ 		
+ 	\par We use dynamic programming to solve it. For mathematical induciton we define $cnt[num][n]$ like this:
+ 	
+ 	\begin{equation*}
+ 		\begin{split}
+ 		cnt[a_{i_1}][0] &= |\{a_{i_0} \in arr \text{ }| \text{ } a_{i_1} = a_{i_0} \times r \land i_1 < i_2\}| \\
+ 		cnt[a_{i_2}][1] &= |\{(a_{i_0}, a_{i_1}) \in arr \times arr \text{ }| \text{ } a_{i_k} = a_{i_{k - 1}} \times r \land i_{k - 1} < i_k  \text{ for }1 \le k \le 2\}|
+ 		\end{split}
+ 	\end{equation*}
+ 	So the final answer is:
+ 	\begin{equation*}
+ 	\sum_{n \in arr}{cnt[n][1]}
+ 	\end{equation*}
+ 	Then for each number $n$ we have
+ 	
+ 	\begin{equation*}
+ 	\begin{split}
+ 	cnt[n \times r][0] &= cnt[n \times r][0] + 1 \\
+ 	cnt[n \times r][1] &= cnt[n \times r][1] + cnt[n][0]
+ 	\end{split}
+ 	\end{equation*}
+ 	Since $r = 1$, the order of assignments are very important.
+ 	
+ 	\begin{lstlisting}
+        long countTriplets(vector<long> arr, long r) {
+            const auto n = arr.size();
+            unordered_map<long, array<long, 2>> cnt;
+            //cnt[a[j]][0] = |{a[i]}| in which i < j and a[j] = a[i] * r
+            //cnt[a[k]][1] = |{a[i], a[j]}| in which i < j < k and 
+            //a[k] = a[j] * r and a[j] = a[i] * r
+            
+            long res = 0;
+            for (const auto& num : arr)
+            {
+                res += cnt[num][1];
+                const auto next = num * r;
+                cnt[next][1] += cnt[num][0];
+                ++cnt[next][0];                       
+            }
+            return res;
+        }
+ 	
+ 	\end{lstlisting}
 \end{document}
