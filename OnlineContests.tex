@@ -101,8 +101,8 @@ void minimumBribes(vector<int> q) {
  	
  	\begin{equation*}
  		\begin{split}
- 		cnt[a_{i_1}][0] &= |\{a_{i_0} \in arr \text{ }| \text{ } a_{i_1} = a_{i_0} \times r \land i_1 < i_2\}| \\
- 		cnt[a_{i_2}][1] &= |\{(a_{i_0}, a_{i_1}) \in arr \times arr \text{ }| \text{ } a_{i_k} = a_{i_{k - 1}} \times r \land i_{k - 1} < i_k  \text{ for }1 \le k \le 2\}|
+ 		cnt[a_{i_1}][0] &= |\{a_{i_0} \in arr \text{ }| \text{ } a_{i_1} = a_{i_0} \times r \text{ }\land \text{ } i_1 < i_2\}| \\
+ 		cnt[a_{i_2}][1] &= |\{(a_{i_0}, a_{i_1}) \in arr \times arr \text{ }| \text{ } a_{i_k} = a_{i_{k - 1}} \times r \text{ }\land \text{ } i_{k - 1} < i_k  \text{ for }1 \le k \le 2\}|
  		\end{split}
  	\end{equation*}
  	So the final answer is:
