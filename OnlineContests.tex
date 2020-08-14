@@ -139,4 +139,75 @@ void minimumBribes(vector<int> q) {
         }
  	
  	\end{lstlisting}
+	\section{Fraudulent Activity Notifications}
+	\href{https://www.hackerrank.com/challenges/fraudulent-activity-notifications/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=sorting}{Problem Statement}
+	\par Basically we want a $O(nlogn)$ algorithm to find median of a sequuence, when we removed the first element and add another one. So we need two binary search trees. In the first one the maximum element is the median itself and in the secon one the minimum element is the second median in case of $d = 2k$ or a value greater than median when $d = 2k + 1$. So if $d = 2k$ both of these binary search trees always have $k$ element. When $d = 2k + 1$, the first one always has $k + 1$ elements and the second one has $k$ elements. Let's call them $lessEqual$ and $greaterEqual$.
+	\par If both removing element and new element belong to the same tree, nothing extra is required. So we only need to remove one element and add the new one. If the removing element is from $lessEqual$, we must remove the minimum element from $greaterEqual$ and add it to $lessEqual$. If the removing element is from $greaterEqual$, we must remove the maximum element from $lessEqaul$ and add it to $greaterEqual$. By doing that the maximum element is $lessEqual$ is median. In case of $d = 2k$, the minimum element in $greaterEqual$ is the second median. The running time of this algorithm is $O(nlogn)$.
+	\begin{lstlisting}
+int activityNotifications(vector<int> expenditure, int d) {
+    multiset<int, greater<int>> lessEqual;
+    multiset<int> greaterEqual;
+
+    vector<int> init(d);
+    copy(expenditure.begin(), expenditure.begin() + d, init.begin());
+    sort(init.begin(), init.end());
+
+    const bool isEven = (d & 1) == 0;
+
+    int medianIndex = (d - 1) / 2;
+    int i;
+    for (i = 0; i <= medianIndex; ++i)
+        lessEqual.insert(init[i]);
+    for (; i < d; ++i)
+        greaterEqual.insert(init[i]);
+    
+    int res = 0;
+    for (int i = d; i < expenditure.size(); ++i)
+    {
+        const int median1 = *lessEqual.begin();
+        if (isEven)
+        {
+            const int median2 = *greaterEqual.begin();
+            if (expenditure[i] >= (median1 + median2))
+                ++res;
+        }
+        else 
+        {
+            if (expenditure[i] >= 2 * median1)
+                ++res;
+        }
+
+        const auto removed = expenditure[i - d];
+
+        if (removed <= median1 && expenditure[i] <= median1)            
+        {
+            lessEqual.erase(lessEqual.find(removed));
+            lessEqual.insert(expenditure[i]);
+        }
+        else if (removed > median1 && expenditure[i] > median1)
+        {
+            greaterEqual.erase(greaterEqual.find(removed));
+            greaterEqual.insert(expenditure[i]);
+        }
+        else if ( removed <= median1)
+        {
+            //For handling d=1, it should first:
+            greaterEqual.insert(expenditure[i]);
+            lessEqual.erase(lessEqual.find(removed));
+            lessEqual.insert(*greaterEqual.begin());
+            greaterEqual.erase(greaterEqual.begin());
+        }
+        else
+        {
+            //For handling d=1, it should be first:
+            lessEqual.insert(expenditure[i]);
+            greaterEqual.erase(greaterEqual.find(removed));
+            greaterEqual.insert(*lessEqual.begin());
+            lessEqual.erase(lessEqual.begin());
+        }
+    }
+    return res;
+}
+	
+	\end{lstlisting}
 \end{document}
