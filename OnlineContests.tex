@@ -210,4 +210,45 @@ int activityNotifications(vector<int> expenditure, int d) {
 }
 	
 	\end{lstlisting}
+	\section{Merge Sort: Counting Inversions}
+	\href{https://www.hackerrank.com/challenges/ctci-merge-sort/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=sorting}{Problem Statement}
+	\par We can solve it using merge sort. Suppose we have $arr[left..right]$. We break it into two subproblem $arr[left..mid]$ and $arr[mid + 1..right]$. Both of them are sorted. According to merge sort algorithm $left \le i \le mid$ and $mid + 1 \le j \le right$. In other words we already put $arr[left..i - 1]$ and $arr[mid + 1..j - 1]$ into their correct positions. So when $arr[j] < arr[i]$, it means $arr[j] < arr[i] \le arr[x]$ in which $i + 1 \le x \le mid$. So we need to have $mid - i + 1$ swaps.
+	\begin{lstlisting}
+long mergeSort(vector<int>& arr, int leftIndex, int rightIndex)
+{
+    if (leftIndex == rightIndex)
+        return 0;
+        
+    long res = 0;
+    int midIndex = (leftIndex + rightIndex) / 2;
+    res = mergeSort(arr, leftIndex, midIndex);
+    res += mergeSort(arr, midIndex + 1, rightIndex);
+
+    vector<int> sorted(rightIndex - leftIndex + 1);
+    int i, j, k;
+    for (i = leftIndex, j = midIndex + 1, k = 0; 
+         i <= midIndex && j <= rightIndex;)
+    {
+        if (arr[i] <= arr[j])
+            sorted[k++] = arr[i++];
+        else  
+        {            
+            res += midIndex - i + 1;
+            sorted[k++] = arr[j++];
+        }
+    }
+    if (i <= midIndex)
+        copy(arr.begin() + i, arr.begin() + midIndex + 1, 
+            sorted.begin() + k);
+    else  
+        copy(arr.begin() + j , arr.begin() + rightIndex + 1,
+             sorted.begin() + k);
+    copy(sorted.begin(), sorted.end(), arr.begin() + leftIndex);
+    return res;
+}
+// Complete the countInversions function below.
+long countInversions(vector<int> arr) {
+    return mergeSort(arr, 0, arr.size() - 1);
+}
+	\end{lstlisting}
 \end{document}
