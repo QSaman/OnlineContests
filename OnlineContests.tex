@@ -251,4 +251,98 @@ long countInversions(vector<int> arr) {
     return mergeSort(arr, 0, arr.size() - 1);
 }
 	\end{lstlisting}
+	\chapter{TopCoder}
+	\section{SRM 428}
+	\subsection{\href{https://community.topcoder.com/stat?c=problem_statement&pm=10182&rd=13519}{ThePalindrome}}
+	We want to add the minimum number of characters to the end of string to make it a palindrome. The straightforward approach is to try add the first $i$ characters in reverse for all $0 \le i \le n - 1$ in which $n$ is the length of string. So we start from $i = 0$ and check whether the string is palindrome. If it's not we check for $i = 1$ and so on. The running time of this algorithm is $O(n^2)$.
+	
+	\begin{lstlisting}[language=c++, frame=single]
+bool isPalindrome(const string& str)
+{
+  int left = 0, right = str.length() - 1;
+  for (; left < right && str[left] == str[right]; 
+         ++left, --right);
+  return left >= right;
+}
+
+int find(string s)
+{
+  for (int i = 0; i < s.length(); ++i)
+  {
+    string tmp = s + string(s.rend() - i, s.rend());
+    if (isPalindrome(tmp))
+      return tmp.length();
+  }
+  throw 1;
+}
+	\end{lstlisting}
+	Since $n \le 50$, this algorithm is fast. We can make it $O(n\log_2{n})$ if we use binary search tree to find the minimum $i$.
+	\par There is another approach. Let's assume we have string $S = s_1 s_2 \dots s_n$. We define $S^\prime = s_n \dots s_2 s_1$. Suppose we can write string $S$ as $QP$. In other words, $S$ is the concatenation of two strings $Q$ and $P$. We assume $P$ is palindrome but $Q$ is not. We can make $S$ palindrome if we convert $QP$ to $QPQ^\prime$ we call this new String $Z$. $Z$ is palindrome because if we reverse it we have:
+	\begin{equation*}
+		\begin{matrix}
+			Z: & QPQ^\prime \\
+			Z^\prime : & QP^\prime Q^\prime
+		\end{matrix}
+	\end{equation*}	
+	Since we want the length of $Q$	be minimum, we must find the maximal $P$:
+	\begin{lstlisting}[language=c++, frame=single]
+bool isPalindrome(const string& str, int start)
+{
+  int left = start, right = str.length() - 1;
+  for (; left < right && str[left] == str[right]; 
+         ++left, --right);
+  return left >= right;
+}
+
+int find(string s)
+{
+  for (int i = 0; i  < s.length(); ++i)
+  {
+    if (isPalindrome(s, i))
+      return s.length() + i;
+  }
+  throw 1;
+}
+	
+	\end{lstlisting}
+	As the previous implementation the running time is $O(n^2)$ but it's easy to convert it to $O(n\log_2n)$ using binary search.
+	\par This implementation has a unique feature. We can convert it to an $O(n)$ algorithm using \href{https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm}{KMP algorithm}. Suppose $S=QP$ where $P$ is a palindrome. We want to find palidnrome postfix $P$ which its length is maximum among all palindrome post-fixes. We need to run KMP pre-compute calculation on $S^\prime = P^\prime Q^\prime$. Then we run KMP algorithm as if we want to find whether $S^\prime$ is a substring of $S$. Suppose we use $i$ as an index for $S$ and $j$ as an index for $S^\prime$. The algorithm start with $i = 0$ and ends when $i = len(S)$ in which $S^\prime[0..j - 1]$ is $P^\prime$ or $P$ (since it's palindrome).
+	
+	\begin{lstlisting}[language=c++, frame=single]
+vector<int> calculateNext(const string& B)
+{
+  vector<int> next(B.length());
+  next[0] = -2;
+  next[1] = -1;
+  int i, j;
+  for (i = 2; i < B.length(); ++i)
+  {
+    j = next[i - 1] + 1;
+    for (; j >= 0 && B[j] != B[i - 1]; j = next[j] + 1);
+    next[i] = j;
+  }
+  return next;
+}
+
+int find(string A)
+{
+  const string B = string(A.rbegin(), A.rend());
+  const auto next = calculateNext(B);
+  int i, j;
+  for (i = 0, j = 0; i < A.length() && j < B.length();)
+  {
+    if (A[i] == B[j])
+      ++i, ++j;
+    else if ((j = next[j] + 1) < 0)
+    {
+      //Since B.front() == A.back(), it's impoosible
+      //i == A.length() here:
+      ++i, j = 0;
+      j = 0;
+    }
+  }
+  int palindromeLen = j;
+  return A.length() + A.length() - palindromeLen; 
+}	
+	\end{lstlisting}	
 \end{document}
