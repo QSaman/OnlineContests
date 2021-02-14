@@ -37,7 +37,7 @@
 	\section{New Year Chaos}
 	 You can find the question in this \href{https://www.hackerrank.com/challenges/new-year-chaos/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=arrays}{link}.
 	 \par We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
-	 \begin{lstlisting}
+	 \begin{lstlisting}[language=c++, frame=single]
 void minimumBribes(vector<int> q) {
 
     const auto& n = q.size();
@@ -72,7 +72,7 @@ void minimumBribes(vector<int> q) {
 	 \end{enumerate}
  	We can start from $i = 1$ to $i = n$ and make sure $i$ is in correct position; otherwise we perform a swap. In each iteration we fix the position of one or two numbers. A good example is \{4, 3, 2, 1\}.
  	
- 	\begin{lstlisting}
+ 	\begin{lstlisting}[language=c++, frame=single]
     int minimumSwaps(vector<int> arr) {
 
     const auto& n = arr.size();
@@ -119,12 +119,14 @@ void minimumBribes(vector<int> q) {
  	\end{equation*}
  	Since $r = 1$, the order of assignments are very important.
  	
- 	\begin{lstlisting}
+ 	\begin{lstlisting}[language=c++, frame=single]
         long countTriplets(vector<long> arr, long r) {
             const auto n = arr.size();
             unordered_map<long, array<long, 2>> cnt;
-            //cnt[a[j]][0] = |{a[i]}| in which i < j and a[j] = a[i] * r
-            //cnt[a[k]][1] = |{a[i], a[j]}| in which i < j < k and 
+            //cnt[a[j]][0] = |{a[i]}| in which i < j and 
+            //               a[j] = a[i] * r
+            //cnt[a[k]][1] = |{a[i], a[j]}| in which 
+            //               i < j < k and 
             //a[k] = a[j] * r and a[j] = a[i] * r
             
             long res = 0;
@@ -143,13 +145,15 @@ void minimumBribes(vector<int> q) {
 	\href{https://www.hackerrank.com/challenges/fraudulent-activity-notifications/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=sorting}{Problem Statement}
 	\par Basically we want a $O(nlogn)$ algorithm to find median of a sequuence, when we removed the first element and add another one. So we need two binary search trees. In the first one the maximum element is the median itself and in the secon one the minimum element is the second median in case of $d = 2k$ or a value greater than median when $d = 2k + 1$. So if $d = 2k$ both of these binary search trees always have $k$ element. When $d = 2k + 1$, the first one always has $k + 1$ elements and the second one has $k$ elements. Let's call them $lessEqual$ and $greaterEqual$.
 	\par If both removing element and new element belong to the same tree, nothing extra is required. So we only need to remove one element and add the new one. If the removing element is from $lessEqual$, we must remove the minimum element from $greaterEqual$ and add it to $lessEqual$. If the removing element is from $greaterEqual$, we must remove the maximum element from $lessEqaul$ and add it to $greaterEqual$. By doing that the maximum element is $lessEqual$ is median. In case of $d = 2k$, the minimum element in $greaterEqual$ is the second median. The running time of this algorithm is $O(nlogn)$.
-	\begin{lstlisting}
-int activityNotifications(vector<int> expenditure, int d) {
+	\begin{lstlisting}[language=c++, frame=single]
+int activityNotifications(vector<int> expenditure, int d)
+{
     multiset<int, greater<int>> lessEqual;
     multiset<int> greaterEqual;
 
     vector<int> init(d);
-    copy(expenditure.begin(), expenditure.begin() + d, init.begin());
+    copy(expenditure.begin(), expenditure.begin() + d,
+         init.begin());
     sort(init.begin(), init.end());
 
     const bool isEven = (d & 1) == 0;
@@ -179,15 +183,17 @@ int activityNotifications(vector<int> expenditure, int d) {
 
         const auto removed = expenditure[i - d];
 
-        if (removed <= median1 && expenditure[i] <= median1)            
+        if (removed <= median1 && 
+            expenditure[i] <= median1)            
         {
             lessEqual.erase(lessEqual.find(removed));
             lessEqual.insert(expenditure[i]);
         }
-        else if (removed > median1 && expenditure[i] > median1)
+        else if (removed > median1 && 
+                 expenditure[i] > median1)
         {
-            greaterEqual.erase(greaterEqual.find(removed));
-            greaterEqual.insert(expenditure[i]);
+          greaterEqual.erase(greaterEqual.find(removed));
+          greaterEqual.insert(expenditure[i]);
         }
         else if ( removed <= median1)
         {
@@ -199,11 +205,11 @@ int activityNotifications(vector<int> expenditure, int d) {
         }
         else
         {
-            //For handling d=1, it should be first:
-            lessEqual.insert(expenditure[i]);
-            greaterEqual.erase(greaterEqual.find(removed));
-            greaterEqual.insert(*lessEqual.begin());
-            lessEqual.erase(lessEqual.begin());
+          //For handling d=1, it should be first:
+          lessEqual.insert(expenditure[i]);
+          greaterEqual.erase(greaterEqual.find(removed));
+          greaterEqual.insert(*lessEqual.begin());
+          lessEqual.erase(lessEqual.begin());
         }
     }
     return res;
@@ -213,8 +219,9 @@ int activityNotifications(vector<int> expenditure, int d) {
 	\section{Merge Sort: Counting Inversions}
 	\href{https://www.hackerrank.com/challenges/ctci-merge-sort/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=sorting}{Problem Statement}
 	\par We can solve it using merge sort. Suppose we have $arr[left..right]$. We break it into two subproblem $arr[left..mid]$ and $arr[mid + 1..right]$. Both of them are sorted. According to merge sort algorithm $left \le i \le mid$ and $mid + 1 \le j \le right$. In other words we already put $arr[left..i - 1]$ and $arr[mid + 1..j - 1]$ into their correct positions. So when $arr[j] < arr[i]$, it means $arr[j] < arr[i] \le arr[x]$ in which $i + 1 \le x \le mid$. So we need to have $mid - i + 1$ swaps.
-	\begin{lstlisting}
-long mergeSort(vector<int>& arr, int leftIndex, int rightIndex)
+	\begin{lstlisting}[language=c++, frame=single]
+long mergeSort(vector<int>& arr, int leftIndex, 
+               int rightIndex)
 {
     if (leftIndex == rightIndex)
         return 0;
@@ -238,12 +245,15 @@ long mergeSort(vector<int>& arr, int leftIndex, int rightIndex)
         }
     }
     if (i <= midIndex)
-        copy(arr.begin() + i, arr.begin() + midIndex + 1, 
-            sorted.begin() + k);
-    else  
-        copy(arr.begin() + j , arr.begin() + rightIndex + 1,
+        copy(arr.begin() + i, 
+             arr.begin() + midIndex + 1, 
              sorted.begin() + k);
-    copy(sorted.begin(), sorted.end(), arr.begin() + leftIndex);
+    else  
+        copy(arr.begin() + j , 
+             arr.begin() + rightIndex + 1,
+             sorted.begin() + k);
+    copy(sorted.begin(), sorted.end(), 
+         arr.begin() + leftIndex);
     return res;
 }
 // Complete the countInversions function below.
