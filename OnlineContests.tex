@@ -52,7 +52,7 @@
 	\chapter{LeetCode}
 	\section{Longest Substring Without Repeating Characters}
 	The \href{https://leetcode.com/problems/longest-substring-without-repeating-characters/}{question} is to find the length of the longest substring without repeating characters. For example in "abcabcbb" the answer is "abc".
-	\par We can use mathematical induction. Assume $s[i..j - 1]$ is a valid substring (it doesn't have any repetitive character). Now we want to add $s[j]$ to it. If $s[j]$ is not in $s[i..j-1]$, then we can easily add $s[j]$ to the list and claim $s[i..j]$ is also valid. Otherwise there is exactly one $i \le k \le j - 1$ that $s[k] = s[j]$.
+	\par We can use mathematical induction. Assume $s[i..j - 1]$ is a valid substring (it doesn't have any repetitive characters). Now we want to add $s[j]$ to it. If $s[j]$ is not in $s[i..j-1]$, then we can easily add $s[j]$ to the list and claim $s[i..j]$ is also valid. Otherwise there is exactly one $i \le k \le j - 1$ that $s[k] = s[j]$.
 	\par Because of $s[j]$, we cannot extend $s[i..j - 1]$ anymore, but we may be able to extend $s[k +1..j]$. The running time of the following implementation is $O(n)$:
 	\begin{lstlisting}
 int lengthOfLongestSubstring(string s) {
@@ -63,6 +63,8 @@ int lengthOfLongestSubstring(string s) {
     auto iter = mp.find(s[j]);
     if (iter != mp.end())
     {
+      //Note that after mp.erase, iter will be invalid!
+      //So we store the index in k
       int k = iter->second;
       for (; i <= k; ++i)
         mp.erase(s[i]);
