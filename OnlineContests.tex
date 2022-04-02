@@ -9,19 +9,16 @@
 \usepackage{placeins}
 \usepackage{amssymb}
 \usepackage{listings}
+\usepackage{hyperref}
 
 \usepackage{tikz}
 \usetikzlibrary{arrows}
 \usetikzlibrary{snakes}
 \usetikzlibrary{decorations.pathmorphing}
 
-\hypersetup{
-	colorlinks,
-	citecolor=black,
-	filecolor=black,
-	linkcolor=black,
-	urlcolor=black
-}
+
+
+\hypersetup{colorlinks=true,linkcolor=blue, linktocpage}
 
 \title{Online Contests Solutions}
 \author{Saman Saadi}
@@ -52,6 +49,30 @@
 %	\newpage
 	\tableofcontents
 	\mainmatter
+	\chapter{LeetCode}
+	\section{Longest Substring Without Repeating Characters}
+	The \href{https://leetcode.com/problems/longest-substring-without-repeating-characters/}{question} is to find the length of the longest substring without repeating characters. For example in "abcabcbb" the answer is "abc".
+	\par We can use mathematical induction. Assume $s[i..j - 1]$ is a valid substring (it doesn't have any repetitive character). Now we want to add $s[j]$ to it. If $s[j]$ is not in $s[i..j-1]$, then we can easily add $s[j]$ to the list and claim $s[i..j]$ is also valid. Otherwise there is exactly one $i \le k \le j - 1$ that $s[k] = s[j]$.
+	\par Because of $s[j]$, we cannot extend $s[i..j - 1]$ anymore, but we may be able to extend $s[k +1..j]$. The running time of the following implementation is $O(n)$:
+	\begin{lstlisting}
+int lengthOfLongestSubstring(string s) {
+  int res = 0;
+  unordered_map<char, int> mp;
+  for (int i = 0, j = 0; i < s.length() && j < s.length(); ++j)
+  {
+    auto iter = mp.find(s[j]);
+    if (iter != mp.end())
+    {
+      int k = iter->second;
+      for (; i <= k; ++i)
+        mp.erase(s[i]);
+    }
+    mp[s[j]] = j;
+    res = max(res, j - i + 1);
+  }
+  return res;
+}
+	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{New Year Chaos}
 	 You can find the question in this \href{https://www.hackerrank.com/challenges/new-year-chaos/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=arrays}{link}.
