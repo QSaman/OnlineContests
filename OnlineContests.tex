@@ -16,8 +16,6 @@
 \usetikzlibrary{snakes}
 \usetikzlibrary{decorations.pathmorphing}
 
-
-
 \hypersetup{colorlinks=true,linkcolor=blue, linktocpage}
 
 \title{Online Contests Solutions}
@@ -50,8 +48,9 @@
 	\tableofcontents
 	\mainmatter
 	\chapter{LeetCode}
-	\section{Longest Substring Without Repeating Characters}
-	The \href{https://leetcode.com/problems/longest-substring-without-repeating-characters/}{question} is to find the length of the longest substring without repeating characters. For example in "abcabcbb" the answer is "abc".
+	\section{Medium}
+	\subsection{\href{https://leetcode.com/problems/longest-substring-without-repeating-characters}{Longest Substring Without Repeating Characters}}
+	Find the length of the longest substring without repeating characters. For example in "abcabcbb" the answer is "abc".
 	\par We can use mathematical induction. Assume $s[i..j - 1]$ is a valid substring (it doesn't have any repetitive characters). Now we want to add $s[j]$ to it. If $s[j]$ is not in $s[i..j-1]$, then we can easily add $s[j]$ to the list and claim $s[i..j]$ is also valid. Otherwise there is exactly one $i \le k \le j - 1$ that $s[k] = s[j]$.
 	\par Because of $s[j]$, we cannot extend $s[i..j - 1]$ anymore, but we may be able to extend $s[k +1..j]$. The running time of the following implementation is $O(n)$:
 	\begin{lstlisting}
@@ -73,6 +72,46 @@ int lengthOfLongestSubstring(string s) {
     res = max(res, j - i + 1);
   }
   return res;
+}
+	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/longest-palindromic-substring/}{Longest Palindromic Substring}}
+	\label{subsec:longest_palindromic_substr}
+	Given a string $s$, return the longest palindromic substring in $s$. For another variation of this problem refer to \ref{subsec:the_palindrome}.
+	\par Assume $S[i..j]=s_i s_{i + 1} \dots s_j$. We define $S^\prime[i^\prime .. j^\prime] = s_{i^\prime} s_{i^{\prime} + 1} \dots s_{j^\prime}$ in such a way $(s_j = s_{i^\prime}) \land (s_{j - 1} = s_{i^\prime + 1}) \land \dots \land (s_i = s_{j^\prime})$. Let's Assume string $P$ is a palindromic string and $c$ is an arbitrary character. We can break $P$ into:
+	\begin{equation*}
+		P[i..j] = \begin{cases}
+			S[i..m]S^\prime[m + 1 .. j] & (j - i + 1) \text{ is even} \\
+			S[i..m - 1]cS^\prime[m + 1 .. j] & (j - i + 1) \text{ is odd}
+		\end{cases}
+	\end{equation*}
+	It's obvious that $m = \lfloor \frac{i + j}{2} \rfloor$. To solve this problem we need to find the place of m that can be $0 \le m < n$. $n$ is the length of the string. The running time of this algorithm is $O(n^2)$:
+	\begin{lstlisting}
+string longestPalindrome(string s) {
+  int len = 0;
+  int index = -1;
+  
+  const auto findLongest = [&](int l, int r)
+  {
+    for (; l >= 0 && r < s.length() && s[l] == s[r]; --l, ++r)
+    {
+      if ((r - l + 1) > len)
+      {
+        len = r - l + 1;
+        index = l;
+      }
+    }
+  };
+  
+  for (int m = 0; m < s.length(); ++m)
+  {
+    //Check for S S_r (length is even)
+    findLongest(m, m + 1);
+    //Check for S c S_r (length is odd)
+    findLongest(m, m);
+  }
+  if (index == -1)
+    return "";
+  return s.substr(index, len);
 }
 	\end{lstlisting}
 	\chapter{HackerRank}
@@ -306,6 +345,8 @@ long countInversions(vector<int> arr) {
 	\chapter{TopCoder}
 	\section{SRM 428}
 	\subsection{\href{https://community.topcoder.com/stat?c=problem_statement&pm=10182&rd=13519}{ThePalindrome}}
+	\label{subsec:the_palindrome}
+	For another variation refer to \ref{subsec:longest_palindromic_substr}.
 	We want to add the minimum number of characters to the end of string to make it a palindrome. The straightforward approach is to try add the first $i$ characters in reverse for all $0 \le i \le n - 1$ in which $n$ is the length of string. So we start from $i = 0$ and check whether the string is palindrome. If it's not we check for $i = 1$ and so on. The running time of this algorithm is $O(n^2)$.
 	
 	\begin{lstlisting}
