@@ -114,6 +114,42 @@ string longestPalindrome(string s) {
   return s.substr(index, len);
 }
 	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/container-with-most-water/}{Container With Most Water}}
+	You are given an integer array $hieght$ of length $n$. There are $n$ vertical lines drawn such that the two endpoints of $i^{th}$ line are $(i, 0)$ and $(i, height[i])$. Find two lines that together with the x-axis form a container, such that the container contains the most water. You may not slant the container.
+	\par We use mathematical induction. Suppose we know the answer for the number of lines less than $n$. Now we consider $n$ lines. We consider the first and $n^{th}$ lines and call them $l_1$ and $l_n$:
+	\begin{enumerate}
+		\item $height[1] < height[n]$: We find the best solution for $l_1$. Because for $2 \le k \le n - 1$, the container $l_1$ and $l_k$ cannot have more water than $l_1$ and $l_n$. We can safely remove $l_1$ and use mathematical induction to find the optimal solution. Then we need to compare that solution with $l_1$ and $l_n$ and choose the maximum
+		\item $height[1] > height[n]$: We find the best solution for $l_n$, like above we can safely remove $l_n$ and find the best solution and compare it with $l_1$ and $l_n$
+		\item $height[1] = height[n]$ We find the best solution for both $l_1$ and $l_n$. We can safely remove both of them and find the optimal solution and compare it with $l_1$ and $l_n$.
+	\end{enumerate}
+	The running time of this algorithm is $O(n)$.
+	\begin{lstlisting}
+int maxArea(vector<int>& height) {
+  int left = 0, right = height.size() - 1;
+  int res = 0;
+  while (left < right)
+  {
+    if (height[left] < height[right])
+    {
+      res = max(res, (right - left) * height[left]);
+      ++left;
+    }
+    else if (height[left] > height[right])
+    {
+      res = max(res, (right - left) * height[right]);
+      --right;
+    }
+    else
+    {
+      res = max (res, (right - left) * height[right]);
+      ++left;
+      --right;
+    }
+  }
+  return res;
+}
+
+	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{New Year Chaos}
 	 You can find the question in this \href{https://www.hackerrank.com/challenges/new-year-chaos/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=arrays}{link}.
