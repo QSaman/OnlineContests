@@ -205,6 +205,7 @@ vector<vector<int>> threeSum(vector<int>& nums) {
       //make sure j points to the last repetitive character:
       if (j + 1 < nums.size() && nums[j] == nums[j + 1])
       {
+        // to handle cases like [0, 0, 0]
         visited.insert(nums[j]);
         continue;
       }
