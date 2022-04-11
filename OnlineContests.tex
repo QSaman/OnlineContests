@@ -250,7 +250,7 @@ vector<vector<int>> threeSum(vector<int>& nums) {
   return res;
 }
 	\end{lstlisting}
-	\subsection{4sum}
+	\subsection{\href{https://leetcode.com/problems/4sum/}{4sum}}
 	\label{subsec:4sum}
 	Given an array $nums$ of $n$ integers, return an array of all the \textbf{unique} quadruplets $[nums[a], nums[b], nums[c], nums[d]]$ such that $a < b < c < d$ and $nums[a] + nums[b] + nums[c] + nums[d] = target$.
 	\par The base case for this solution is 2sum. For more information refer to \ref{subsec:twosumii}. It's a good idea to look at 3sum in \ref{subsec:3sum}
@@ -351,9 +351,8 @@ vector<vector<int>> fourSum(vector<int>& nums, int target) {
 }
 	\end{lstlisting}
 	\chapter{HackerRank}
-	\section{New Year Chaos}
-	 You can find the question in this \href{https://www.hackerrank.com/challenges/new-year-chaos/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=arrays}{link}.
-	 \par We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
+	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
+	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
 	 \begin{lstlisting}
 void minimumBribes(vector<int> q) {
 
@@ -379,9 +378,8 @@ void minimumBribes(vector<int> q) {
 }
 	 \end{lstlisting}
 	 
-	 \section{Minimum Swaps 2}
-	 See the problem statement in this \href{https://www.hackerrank.com/challenges/minimum-swaps-2/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=arrays}{link}.
- 	\par Note that this solution is based on \href{https://en.wikipedia.org/wiki/Selection_sort}{Selection Sort} in which the number of swaps are minimum. According to Wikipedia: "One thing which distinguishes selection sort from other sorting algorithms is that it makes the minimum possible number of swaps, n − 1 in the worst case.". Altourh Selection sort has minimum number of swaps among all sorts agorithms, it has $O(n^2)$ comparisons. Since the final result is $\{1, 2, \dots, n\}$, it's like we have the set in sorted order so we can bypass comparisons and use Selection Sort advantage which is the minimum number of swaps.
+	 \section{\href{https://www.hackerrank.com/challenges/minimum-swaps-2/problem}{Minimum Swaps 2}}
+ 	Note that this solution is based on \href{https://en.wikipedia.org/wiki/Selection_sort}{Selection Sort} in which the number of swaps are minimum. According to Wikipedia: "One thing which distinguishes selection sort from other sorting algorithms is that it makes the minimum possible number of swaps, n − 1 in the worst case.". Altourh Selection sort has minimum number of swaps among all sorts agorithms, it has $O(n^2)$ comparisons. Since the final result is $\{1, 2, \dots, n\}$, it's like we have the set in sorted order so we can bypass comparisons and use Selection Sort advantage which is the minimum number of swaps.
 	 \par We define $index_i$ as the current index of number $i$. Suppose we have $n$ numbers, so $1 \le index_i \le n$. The goal is to have $index_i = i$. Without losing generality suppose $i < j \land index_i = j$. There are two cases to consider:
 	 \begin{enumerate}
 	 	\item If $index_j = i$, then by swapping $arr_i$ and $arr_j$, we put both $i$ and $j$ in their corresponding positions.
@@ -411,10 +409,8 @@ void minimumBribes(vector<int> q) {
     return cnt;
 }
  	\end{lstlisting}
- 	\section{Count Triplets}
- 	\href{https://www.hackerrank.com/challenges/count-triplets-1/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=dictionaries-hashmaps}{Problem statement}.
- 		
- 	\par We use dynamic programming to solve it. For mathematical induciton we define $cnt[num][n]$ like this:
+ 	\section{\href{https://www.hackerrank.com/challenges/count-triplets-1/problem}{Count Triplets}}	
+ 	We use dynamic programming to solve it. For mathematical induciton we define $cnt[num][n]$ like this:
  	
  	\begin{equation*}
  		\begin{split}
@@ -458,9 +454,8 @@ void minimumBribes(vector<int> q) {
         }
  	
  	\end{lstlisting}
-	\section{Fraudulent Activity Notifications}
-	\href{https://www.hackerrank.com/challenges/fraudulent-activity-notifications/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=sorting}{Problem Statement}
-	\par Basically we want a $O(nlogn)$ algorithm to find median of a sequuence, when we removed the first element and add another one. So we need two binary search trees. In the first one the maximum element is the median itself and in the secon one the minimum element is the second median in case of $d = 2k$ or a value greater than median when $d = 2k + 1$. So if $d = 2k$ both of these binary search trees always have $k$ element. When $d = 2k + 1$, the first one always has $k + 1$ elements and the second one has $k$ elements. Let's call them $lessEqual$ and $greaterEqual$.
+	\section{\href{https://www.hackerrank.com/challenges/fraudulent-activity-notifications/problem}{Fraudulent Activity Notifications}}
+	Basically we want a $O(nlogn)$ algorithm to find median of a sequuence, when we removed the first element and add another one. So we need two binary search trees. In the first one the maximum element is the median itself and in the secon one the minimum element is the second median in case of $d = 2k$ or a value greater than median when $d = 2k + 1$. So if $d = 2k$ both of these binary search trees always have $k$ element. When $d = 2k + 1$, the first one always has $k + 1$ elements and the second one has $k$ elements. Let's call them $lessEqual$ and $greaterEqual$.
 	\par If both removing element and new element belong to the same tree, nothing extra is required. So we only need to remove one element and add the new one. If the removing element is from $lessEqual$, we must remove the minimum element from $greaterEqual$ and add it to $lessEqual$. If the removing element is from $greaterEqual$, we must remove the maximum element from $lessEqaul$ and add it to $greaterEqual$. By doing that the maximum element is $lessEqual$ is median. In case of $d = 2k$, the minimum element in $greaterEqual$ is the second median. The running time of this algorithm is $O(nlogn)$.
 	\begin{lstlisting}
 int activityNotifications(vector<int> expenditure, int d)
@@ -533,7 +528,7 @@ int activityNotifications(vector<int> expenditure, int d)
 }
 	
 	\end{lstlisting}
-	\section{Merge Sort: Counting Inversions}
+	\section{\href{https://www.hackerrank.com/challenges/ctci-merge-sort/problem}{Merge Sort: Counting Inversions}}
 	\href{https://www.hackerrank.com/challenges/ctci-merge-sort/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=sorting}{Problem Statement}
 	\par We can solve it using merge sort. Suppose we have $arr[left..right]$. We break it into two subproblem $arr[left..mid]$ and $arr[mid + 1..right]$. Both of them are sorted. According to merge sort algorithm $left \le i \le mid$ and $mid + 1 \le j \le right$. In other words we already put $arr[left..i - 1]$ and $arr[mid + 1..j - 1]$ into their correct positions. So when $arr[j] < arr[i]$, it means $arr[j] < arr[i] \le arr[x]$ in which $i + 1 \le x \le mid$. So we need to have $mid - i + 1$ swaps.
 	\begin{lstlisting}
