@@ -148,7 +148,207 @@ int maxArea(vector<int>& height) {
   }
   return res;
 }
+	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/}{Two Sum II - Input Array Is Sorted}}
+	\label{subsec:twosumii}
+	Given a sorted array, return two indices $i, j$ such that $numbers[i] + numbers[j] = target \land i < j$. The indices start from $1$.
+	\par For similar questions, refer to \ref{subsec:3sum}. For a general solution refer to \ref{subsec:4sum}
+	\par We use mathematical induction. We assume we know the solution for all sorted arrays with length less than $n$. Now consider a sorted array with length $n$:
+	\begin{enumerate}
+		\item $numbers[0] + numbers[n - 1] < target$: Since the array is sorted, $numbers[n - 1]$ is the maximum and $numbers[0]$ is the minimum. So $numbers[0]$ cannot be in the solution. We use mathematical induction to get the answer from $numbers[1..n-1]$
+		\item $numbers[0] + numbers[n - 1] > target$: With a similar argument we can say $numbers[n - 1]$ cannot be in the solution. So we use the induction to solve $numbers[0..n - 2]$
+		\item $number[0] + numbers[n - 1] == target$: We have the solution.		
+	\end{enumerate}
+	\begin{lstlisting}
+vector<int> twoSum(vector<int>& numbers, int target) {
+  
+  int left = 0, right = numbers.size() - 1;
+  while (left < right)
+  {
+    const auto sum = numbers[left] + numbers[right];
+    if (sum < target)
+      ++left;
+    else if ( sum > target)
+      --right;
+    else
+      return {left + 1, right + 1};
+  }
+  throw 1;
+}
+	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/3sum/}{3Sum}}
+	\label{subsec:3sum}
+	Given an integer array nums, return all triplets $[nums[i], nums[j], nums[k]]$ such that $i \ne j \land i \ne k \land j \ne k$. Notice that the solution set must not contain \textbf{duplicate triplets}.
+	\par This is the extension of \ref{subsec:twosumii}. For general solution refer to \ref{subsec:4sum}
+	\par The tricky part here is how to avoid duplicates. We assume $nums$ is sorted, then we use mathematical induction. We assume we know how to solve it for less than $n$ sorted numbers. Now we want to solve $n$ sorted numbers. We consider the first element $nums[0]$. Now consider $nums[j]$ such that $j = k + 1$. We define $k$ as $\{nums[0], nums[1], \dots, nums[k]\}$ such that $nums[m] = nums[m + 1]$ for $0 \le m \le k - 1$. We use mathematical induction to find the answers for $nums[j..n - 1]$. 
+	\par Note that we cannot use induction for subproblems $nums[m..n - 1]$ for $1 \le m \le k$ because it's possible they have triplets that start with $nums[0]$. As mentioned in problem statement, duplicates are not allowed.
+	\par Then we need to find the answers that contain $nums[0]$. For doing that we should find set $S$:
+	\begin{equation*}
+		S = \{\{p, q\}: 1 \le p < q \le n - 1 \land nums[p] + nums[q] = -nums[0]\}
+	\end{equation*}
+	Note that $S$ shouldn't have any duplicates. Also it's important that we should find the pairs in $nums[1..n - 1]$ (not in $nums[j..n - 1]$. For example $[0, 0, 0]$ is a valid triplet). This is \href{https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/}{two sum II problem} (refer to \ref{subsec:twosumii}), but we should handle duplicates. There are two solutions to implement two sum:
+	\begin{lstlisting}
+vector<vector<int>> threeSum(vector<int>& nums) {
+  vector<vector<int>> res;
+  
+  sort(nums.begin(), nums.end()); //O(nlogn)
+  unordered_set<int> visited;
+  unordered_set<int> duplicate;
+  for (int i = 0; i < nums.size() && nums[i] <= 0; ++i)
+  {
+    // To find subprolem nums[j..n - 1]
+    // Note that j = k + 1. Refer to the solution for more info
+    if (i > 0 && nums[i] == nums[i - 1])
+      continue;
+    visited.clear();
+    duplicate.clear();
+    for (int j = i + 1; j < nums.size(); ++j)
+    {
+      auto target = -nums[i] - nums[j];
+      if (visited.find(target) != visited.end() && 
+          duplicate.find(target) == visited.end())
+      {
+        res.push_back({nums[i], target, nums[j]});
+        duplicate.insert(target);
+      }
+      visited.insert(nums[j]);
+    }
+  }
+  return res;
+}
+	\end{lstlisting}
+	The second solution:
+	\begin{lstlisting}
+vector<vector<int>> threeSum(vector<int>& nums) {
+  vector<vector<int>> res;
+  
+  sort(nums.begin(), nums.end()); //O(nlogn)        
+  for (int i = 0; i + 1 < nums.size() && nums[i] <= 0; ++i)
+  {
+    // To find subprolem nums[j..n - 1]:
+    if (i > 0 && nums[i] == nums[i - 1])
+      continue;
+    int target = -nums[i];
+    int left = i + 1, right = nums.size() - 1;
+    while (left < right)
+    {            
+      auto sum = nums[left] + nums[right];
+      if (sum < target)
+        ++left;
+      else if (sum > target)
+        --right;
+      else
+      {
+        res.push_back({nums[i], nums[left], nums[right]});
+        ++left;
+        while (left < right && nums[left] == nums[left - 1])
+          ++left;
+        --right;
+      }
+    }
+  }
+  return res;
+}
+	\end{lstlisting}
+	\subsection{4sum}
+	\label{subsec:4sum}
+	Given an array $nums$ of $n$ integers, return an array of all the \textbf{unique} quadruplets $[nums[a], nums[b], nums[c], nums[d]]$ such that $a < b < c < d$ and $nums[a] + nums[b] + nums[c] + nums[d] = target$.
+	\par The base case for this solution is 2sum. For more information refer to \ref{subsec:twosumii}. It's a good idea to look at 3sum in \ref{subsec:3sum}
+	\par We can solve it similar to 3sum (for more information refer to \ref{subsec:3sum}). We suppose the array is sorted. We use mathematical induction, so we know how to solve it for less than $n$ sorted numbers. Now we consider $n$ sorted numbers. We choose the first two numbers $nums[0]$ and $nums[1]$. We choose subproblem $nums[j..n - 1]$ such that $nums[m] = nums[0] \lor nums[m] = nums[1]$ for $2 \le m \le j - 1$. As explained in section \ref{subsec:3sum}, this is required to avoid duplication. We use mathematical induction to find quadruplets in $nums[j..n - 1]$. Then for finding quadruplets that contain $nums[0]$ and $nums[1]$, we use 2sum (refer to section \ref{subsec:twosumii}) algorithm on $nums[2..n-1]$ (not $nums[j..n - 1]$. For example $[0, 0, 0, 0]$ is a valid quadruplet if $target=0$).
+	\begin{lstlisting}
+vector<vector<int>> fourSum(vector<int>& nums, int target) {
+  vector<vector<int>> res;
+  const auto size = nums.size();
+  sort(nums.begin(), nums.end());
+  for (int i = 0; (i + 3) < size; ++i)
+  {
+    if (i > 0 && nums[i] == nums[i - 1])
+      continue;
+    for (int j = i + 1; (j + 2) < size; ++j)
+    {
+      if (j > i + 1 && nums[j] == nums[j - 1])
+        continue;
+      int t = target - nums[i] - nums[j];
+      int left = j + 1;
+      int right = size - 1;
+      while (left < right)
+      {
+        int sum = nums[left] + nums[right];
+        if (sum < t)
+          ++left;
+        else if (sum > t)
+          --right;
+        else
+        {
+          res.push_back({nums[i], nums[j], nums[left], nums[right]});
+          ++left;
+          while (nums[left] == nums[left - 1] && left < right)
+            ++left;
+          --right;
+        }
+      }
+    }
+  }
+  return res;
+}
+	\end{lstlisting}
+	To solve $ksum$ problem, we need $k - 2$ for loops to find $[nums[0], nums[1], \dots, nums[k - 3]]$ and we use 2sum algorithm to find $nums[k - 2]$ and $nums[k - 1]$. We can use a recursive function to solve the problem dynamically during the runtime.
+	\begin{lstlisting}
+vector<vector<int>> twosum(vector<int>& nums, int left, int target)
+{
+  int right = nums.size() -1;
+  vector<vector<int>> res;
+  while (left < right)
+  {            
+    auto sum = nums[left] + nums[right];
+    if (sum < target)
+      ++left;
+    else if (sum > target)
+      --right;
+    else
+    {
+      res.push_back({nums[left], nums[right]});
+      ++left;
+      while (nums[left] == nums[left - 1] && left < right)
+        ++left;
+      --right;
+    }
+  }
+  return res;
+}
+vector<vector<int>> ksum(vector<int>& nums, int start, int k, int target)
+{
+  vector<vector<int>> res;
+  if (start == nums.size())
+    return res;
+  int average = target / k;
+  //nums[start] * k > target
+  if (nums[start] > average)
+    return res;
+  //nums.back() * k < target
+  if (nums.back() < average)
+    return res;
+  if (k == 2)
+    return twosum(nums, start, target);
+  
+  for (int i = start; i < nums.size(); ++i)
+  {
+    if (i > start && nums[i] == nums[i - 1])
+      continue;
+    auto partial = ksum(nums, i + 1, k - 1, target - nums[i]);
+    for (auto& val : partial)
+    {
+      val.insert(val.begin(), nums[i]);
+      res.push_back(val);
+    }
+  }
+  return res;
+}
 
+vector<vector<int>> fourSum(vector<int>& nums, int target) {
+  sort(nums.begin(), nums.end());
+  return ksum(nums, 0, 4, target);
+}
 	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{New Year Chaos}
