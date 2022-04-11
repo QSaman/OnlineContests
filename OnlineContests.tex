@@ -193,24 +193,24 @@ vector<vector<int>> threeSum(vector<int>& nums) {
   
   sort(nums.begin(), nums.end()); //O(nlogn)
   unordered_set<int> visited;
-  unordered_set<int> duplicate;
   for (int i = 0; i < nums.size() && nums[i] <= 0; ++i)
   {
     // To find subprolem nums[j..n - 1]
-    // Note that j = k + 1. Refer to the solution for more info
+    //note that i points to the first repetitive character
     if (i > 0 && nums[i] == nums[i - 1])
       continue;
     visited.clear();
-    duplicate.clear();
     for (int j = i + 1; j < nums.size(); ++j)
     {
-      auto target = -nums[i] - nums[j];
-      if (visited.find(target) != visited.end() && 
-          duplicate.find(target) == visited.end())
+      //make sure j points to the last repetitive character:
+      if (j + 1 < nums.size() && nums[j] == nums[j + 1])
       {
-        res.push_back({nums[i], target, nums[j]});
-        duplicate.insert(target);
+        visited.insert(nums[j]);
+        continue;
       }
+      auto target = -nums[i] - nums[j];
+      if (visited.count(target) > 0)
+        res.push_back({nums[i], target, nums[j]});
       visited.insert(nums[j]);
     }
   }
