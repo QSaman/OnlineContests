@@ -353,9 +353,17 @@ vector<vector<int>> fourSum(vector<int>& nums, int target) {
 	\end{lstlisting}
 	\subsection{\href{https://leetcode.com/problems/generate-parentheses/}{Generate Parentheses}}
 	 Given $n$ pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
-	 \par We use mathematical induction. Let's say $S_n$ is the set of all valid $n$ pairs. We assume we know how to generate $S_k$ for $k < n$. It's obvious that $S_1 = \{"()"\}$ and $S_0 = \{""\}$. Now we consider $S_n$. let's assume $p \in S_i$ and $q \in S_{n - 1 - i}$ for $0 \le i \le n - 1$. It's obvious that "(p)q" is a a valid parentheses with $n$ pairs ($i + n - 1 - i + 1 = n$). We can generalize it:
+	 \par We use mathematical induction. Let's say $S_n$ is the set of all valid $n$ pairs. We assume we know how to generate $S_k$ for $k < n$. It's obvious that $S_1 = \{"()"\}$ and $S_0 = \{""\}$. Now we consider $S_n$. let's assume $p \in S_i$ and $q \in S_{n - 1 - i}$ for $0 \le i \le n - 1$. It's obvious that "(p)q" is a a valid parentheses with $n$ pairs ($i + n - 1 - i + 1 = n$). We define
 	 \begin{equation*}
-	 	S_n = \bigcup_{i = 0}^{n - 1}{S_i \times S_{n - 1 - i}}
+	 	(S_i) = \{(p) : p \in S_i\}
+	 \end{equation*}
+ 	 Also we define \href{https://en.wikipedia.org/wiki/Cartesian_product}{Cartesian product} as follow ($pq$ means the concatenation of strings $p$ and $q$):
+ 	 \begin{equation*}
+ 	 	S_i \times S_j = \{pq : p \in S_i \land q \in S_j\}
+ 	 \end{equation*}
+  	 So we can use the induction to generate $S_n$ as follow:
+	 \begin{equation*}
+	 	S_n = \bigcup_{i = 0}^{n - 1}{(S_i) \times S_{n - 1 - i}}
 	 \end{equation*}
  	\begin{lstlisting}
 vector<string> generateParenthesis(int n) {
