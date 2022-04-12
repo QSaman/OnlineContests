@@ -351,6 +351,31 @@ vector<vector<int>> fourSum(vector<int>& nums, int target) {
   return ksum(nums, 0, 4, target);
 }
 	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/generate-parentheses/}{Generate Parentheses}}
+	 Given $n$ pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+	 \par We use mathematical induction. Let's say $S_n$ is the set of all valid $n$ pairs. We assume we know how to generate $S_k$ for $k < n$. It's obvious that $S_1 = \{"()"\}$ and $S_0 = \{""\}$. Now we consider $S_n$. let's assume $p \in S_i$ and $q \in S_{n - 1 - i}$ for $0 \le i \le n - 1$. It's obvious that "(p)q" is a a valid parentheses with $n$ pairs ($i + n - 1 - i + 1 = n$). We can generalize it:
+	 \begin{equation*}
+	 	S_n = \bigcup_{i = 0}^{n - 1}{S_i \times S_{n - 1 - i}}
+	 \end{equation*}
+ 	\begin{lstlisting}
+vector<string> generateParenthesis(int n) {
+  vector<string> res;
+  if (n == 0)
+    return {""};
+  for (int i = 0; i < n; ++i)
+  {
+    auto set_left = generateParenthesis(i);
+    auto set_right = generateParenthesis(n - i - 1);
+    for (const auto& p : set_left)
+    {
+      string left_str = "(" + p + ")";
+      for (const auto& q : set_right)
+        res.push_back(left_str + q);
+    }
+  }
+  return res;
+}
+ 	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
