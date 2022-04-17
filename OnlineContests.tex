@@ -432,7 +432,7 @@ vector<string> generateParenthesis(int n) {
 			0 & a < b
 		\end{cases}
 	\end{equation*}
-	\par Let's consider $a=-2^{31}$. We cannot store it as positive in a 32 bit signed integer. Let's assume $a = bq + r$:
+	\par Let's consider $a=-2^{31}$. We cannot store it as positive in a 32-bit signed integer. Let's assume $a = bq + r$:
 	\begin{equation*}
 		\begin{split}
 			&b(q - 1) + r \\
@@ -441,7 +441,7 @@ vector<string> generateParenthesis(int n) {
 			&\implies a - b = b(q - 1) + r
 		\end{split}
 	\end{equation*}
-	So $div(|2^{31}|, |b|) = div(|2^{31}| -b, b) + 1$:
+	So $div(|2^{31}|, |b|) = div(|2^{31}| - |b|, |b|) + 1$:
 	\begin{lstlisting}
 int div(int a, int b)
 {
