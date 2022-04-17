@@ -484,20 +484,7 @@ int divide(int a, int b) {
 	\par Assume $i$ is the maximum index such that $nums[i] < nums[i + 1]$ for $0 \le i \le n - 2$. If such $i$ does not exist it means we have the last permutation. So we should return the first one. Since $i$ is the maximum index, it implies $nums[k] \ge nums[k + 1]$ for all $i + 1 \le k \le n - 2$. In other words, $nums[i + 1..n - 1]$ is in non-ascending order.
 	\par Let's assume $j \ge i + 1$ is the maximum index such that $nums[i] < nums[j]$. Since $nums[i + 1..n - 1]$ is in non-ascending order, that means $nums[j]$ is the smallest element that is bigger than $nums[i]$ in that range. We should swap $nums[i]$ and $nums[j]$ and reverse $nums[i + 1..n - 1]$ to make it in non-descending order. This is the smallest permutation greater than $nums$.
 	\par To summarize we break $nums[0..n - 1]$ into $A = nums[0..i]$ and $B = nums[i + 1..n - 1]$. The former is in non-descending and the latter in non-ascending order. We define $B^{\prime} = \{nums[j] \in B : nums[j] > nums[i]\}$. We find the smallest element in $B^{\prime}$ and swap it with $nums[i]$. Then we should sort $B$ in non-descending order.
-	\par The implementation is based on \href{https://en.cppreference.com/w/cpp/algorithm/next_permutation}{possible implementation} of next\_permutation. To understand how \href{https://en.cppreference.com/w/cpp/iterator/reverse_iterator/base}{reverse\_iterator::base} works, see the following snippet:
-	\begin{lstlisting}
-int main()
-{
-  using iter = std::vector<int>::iterator;
-  using r_iter = std::vector<int>::reverse_iterator;
-
-  std::vector<int> v {0, 1, 2, 3, 4};
-  r_iter res = std::find(v.rbegin(), v.rend(), 2);
-  iter base = res.base();
-  assert(*res == 2 && *base == 3);
-}
-	\end{lstlisting}
-	Knowing that, we have the following solution:
+	\par The implementation is based on \href{https://en.cppreference.com/w/cpp/algorithm/next_permutation}{possible implementation} of next\_permutation. To understand how reverse\_iterator::base ($i.base()$) works, refer to \ref{appendix:reverse_iterator}.
 	\begin{lstlisting}
 void nextPermutation(vector<int>& nums) {
   auto i = is_sorted_until(nums.rbegin(), nums.rend());
@@ -828,5 +815,77 @@ int find(string A)
   int palindromeLen = j;
   return A.length() + A.length() - palindromeLen; 
 }	
-	\end{lstlisting}	
+	\end{lstlisting}
+	\appendix
+	\chapter{C++ refresher}
+	\section{Inserting into a container}
+	The following code uses most insert operations:
+	\begin{lstlisting}
+#include <iostream>
+#include <vector>
+#include <deque>
+#include <iterator>
+#include <algorithm>
+
+template<typename Container>
+void print(const Container& c)
+{
+  static int id = 1;
+  std::cout << id++ << ": ";
+  std::for_each(c.begin(), c.end(), [](const auto& val) {
+                std::cout << val << ' ';
+                });
+  std::cout << std::endl;
+}
+
+int main()
+{
+  std::vector<int> base{0, 1, 2, 3, 4};
+  auto v(base);
+  std::vector<int> v2{100, 200, 300};
+
+  auto i = std::next(v.begin()); // v.begin() + 1
+  i = v.insert(i, v2[0]);
+  i = v.insert(i, v2[1]);
+  i = v.insert(i, v2[2]);
+  print(v); // 1: 0 300 200 100 1 2 3 4
+  // Note that after
+  // v.insert(i, v[0]);
+  // i becomes invalid. So this is undefined behavior:
+  // v.insert(i, v[1]);
+  v = base;
+  i = std::next(v.begin()); // v.begin() + 1
+  i = v.insert(i, v2.begin(), v2.end());
+  print(v); // 2: 0 100 200 300 1 2 3 4
+        
+  v = base;
+  std::copy(v2.begin(), v2.end(),
+            std::inserter(v, std::next(v.begin(), 1)));
+  print(v); // 3: 0 100 200 300 1 2 3 4
+  
+  v = base;
+  std::copy(v2.begin(), v2.end(), std::back_inserter(v));
+  print(v); // 4: 0 1 2 3 4 100 200 300
+  
+  //std::vector doesn't have push_front:
+  std::deque<int> d(base.begin(), base.end());
+  std::copy(v2.begin(), v2.end(), std::front_inserter(d));
+  print(d); // 1: 300 200 100 0 1 2 3 4
+}
+	\end{lstlisting}
+	\section{\href{https://en.cppreference.com/w/cpp/iterator/reverse_iterator}{std::reverse\_iterator}}
+	\label{appendix:reverse_iterator}
+	 To understand how \href{https://en.cppreference.com/w/cpp/iterator/reverse_iterator/base}{reverse\_iterator::base} works, see the following snippet. For more information refer to \href{https://en.cppreference.com/w/cpp/iterator/reverse_iterator}{std::reverse\_iterator}.
+	\begin{lstlisting}
+int main()
+{
+  using iter = std::vector<int>::iterator;
+  using r_iter = std::vector<int>::reverse_iterator;
+
+  std::vector<int> v {0, 1, 2, 3, 4};
+  r_iter res = std::find(v.rbegin(), v.rend(), 2);
+  iter base = res.base();
+  assert(*res == 2 && *base == 3);
+}
+	\end{lstlisting}
 \end{document}
