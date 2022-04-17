@@ -384,6 +384,102 @@ vector<string> generateParenthesis(int n) {
   return res;
 }
  	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/divide-two-integers/}{Divide Two Integers}}
+	Divide two integers \textbf{without} using multiplication, division, and mod operator. We can only use \textbf{32-bit signed integers}.
+	\par We know that the range of a 32-bit signed integer is $[-2^{31}, 2^{31} - 1]$. We should convert negative numbers to positive ones. The tricky part is how to handle $-2^{31}$. Because we cannot fit it inside a positive 32-bit integer and we are not allowed to use $unsigned$ variables.
+	\subsubsection{Method 1}
+	We use mathematical induction. Suppose $a = bq + r$. We define $div(a, b) = q$ and $mod(a, b) = r$. Suppose we know how to calculate $div$ and $mod$ for less than $a$. Now we want to calculate for $a$:
+	\begin{equation*}
+		\begin{split}
+		div(a, b) &= \begin{cases}
+			2 \times div(k, b) + div(2 \times mod(k, b), b) & a = 2k \\
+			2 \times div(k, b) + div(2 \times mod(k, b) + 1 , b) & a = 2k + 1 \\
+			0 & a < b \\
+			1 & a = b \\
+			a & b = 1 \\
+			base_{div}(a, b) & k \le b
+		\end{cases} \\
+		mod(a, b) &= \begin{cases}
+			mod(2 \times mod(k, b), b) & a = 2k \\
+			mod(2 \times mod(k, b) + 1, b) & a = 2k + 1 \\
+			a & a < b \\
+			0 & a = b \lor b = 1 \\
+			base_{mod}(a, b) & k \le b	
+		\end{cases}	
+		\end{split}	
+	\end{equation*}
+	For calculating $base$ we use a straightforward approach. Since we cannot use multiplication and division, we can use $2 \times a = a + a$ and we use shift operator to do division by 2 ($a >> 1$).
+	\par Let's consider $a=-2^{31}$. Let's assume $q = div(2^{31}, |b|)$ and $r = mod(2^{31}, |b|)$:
+	\begin{equation*}
+		|div(-2^{31}, |b|)| = \begin{cases}
+			q & r + 1 < |b| \\
+			q + 1 & r + 1 \ge |b|
+		\end{cases}
+	\end{equation*}
+	\subsubsection{Method2}
+	This is easier to implement. We assume $a = bq + r$. We define $div(a, b) = q$. Like previous method, suppose we know how to calculate $div$ for less than $a$. Now we want to calculate for $a$. Suppose $b \times 2^k \le a < b \times 2^{k + 1}$. So we can say $a = b \times 2^k + r$. If $r < b$ we find the answer; otherwise we use the induction to find $r = bq^{\prime} + r^{\prime}$. So the answer is:
+	\begin{equation*}
+		\begin{split}
+			a &= b \times 2^k + r \\
+			  &= b \times 2^k + bq^{\prime} + r^{\prime} \\
+			  &= b \times (2^k + q^\prime) + r^{\prime}
+		\end{split}
+	\end{equation*}
+	We can summarize it as:
+	\begin{equation*}
+		div(a, b) = \begin{cases}
+			2^k + div(a - b \times 2^k, b) & a \ge b \\
+			0 & a < b
+		\end{cases}
+	\end{equation*}
+	\par Let's consider $a=-2^{31}$. We cannot store it as positive in a 32 bit signed integer. Let's assume $a = bq + r$:
+	\begin{equation*}
+		\begin{split}
+			&b(q - 1) + r \\
+			&= bq + r - b \\
+			&= a - b \\
+			&\implies a - b = b(q - 1) + r
+		\end{split}
+	\end{equation*}
+	So $div(|2^{31}|, |b|) = div(|2^{31}| -b, b) + 1$:
+	\begin{lstlisting}
+int div(int a, int b)
+{
+  if (a < b)
+    return 0;        
+  const int half_of_a = a >> 1;
+  int q = 1, bq = b;
+  for (; bq <= half_of_a; bq <<= 1, q <<= 1);
+  return q + div(a - bq, b);
+}
+
+int divide(int a, int b) {
+  static const int min_int = numeric_limits<int>::min();
+  static const int max_int = numeric_limits<int>::max();
+  int sign = 1;
+  int res = 0;
+  
+  if (b == min_int && a == min_int)
+    return 1;
+  if (b == min_int)
+    return 0;
+  if (b == 1 && a == min_int)
+    return min_int;
+  if (b == -1 && a == min_int)
+    return max_int;
+  
+  if (b < 0)
+    sign = -sign, b = -b;
+  if (a == min_int)
+    a += b, res = 1;
+  if (a < 0)
+    sign = -sign, a = -a;
+  
+  res += div(a, b);
+
+  return res * sign;
+}
+	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
