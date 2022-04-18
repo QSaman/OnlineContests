@@ -497,6 +497,53 @@ void nextPermutation(vector<int>& nums) {
   reverse(i.base(), nums.end());
 }
 	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/search-in-rotated-sorted-array/}{Search in Rotated Sorted Array}}
+	There is an integer array $nums$ sorted in ascending order (with distinct values). For example let's assume we have $[0,1,2,4,5,6,7]$. We might rotate at pivot index $3$ so it becomes $[4,5,6,7,0,1,2]$. Write an $O(\log{n})$ algorithm to find the index of $target$.
+	\par In the non-rotated versions, the minimum number starts at index $0$. We use the following algorithm to find the minimum index in the rotated one. We assume $middle = \lfloor \frac{left + right}{2} \rfloor$
+	\begin{equation*}
+		f(left, right) = \begin{cases}
+			f(middle + 1, right) & nums[middle] > nums[right] \\
+			f(left, middle) & nums[middle] < nums[right] \\
+			left & left = right			
+		\end{cases}
+	\end{equation*}
+	Let's say $k = f(0, n - 1)$. Then we have two ascending lists $A = nums[0.. k - 1]$ and $B = nums[k..n - 1]$. Based on $target$ value we choose $A$ or $B$ to do a binary search to see whether $target$ is in the list.
+	\begin{lstlisting}
+int search(vector<int>& nums, int target) {
+  int left = 0;
+  const int n = nums.size();
+  int right = n - 1;
+  int k;
+  while (left <= right)
+  {
+    if (left == right)
+    {
+      k = left;
+      break;
+    }
+    int middle = (left + right) / 2;
+    if (nums[middle] > nums[right])
+      left = middle + 1;
+    else
+      right = middle;
+  }
+  if (target >= nums[k] && target <= nums[n - 1])
+    left = k, right = n - 1;
+  else
+    left = 0, right = k - 1;
+  while (left <= right)
+  {
+    if (left == right)
+      return nums[left] == target ? left : -1;
+    int middle = (left + right) / 2;
+    if (nums[middle] < target)
+      left = middle + 1;
+    else
+      right = middle;
+  }
+  return -1;
+}
+	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
