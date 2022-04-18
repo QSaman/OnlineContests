@@ -888,4 +888,55 @@ int main()
   assert(*res == 2 && *base == 3);
 }
 	\end{lstlisting}
+	\section{\href{https://en.cppreference.com/w/cpp/algorithm/mismatch}{std::mismatch}}
+	\begin{lstlisting}
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <cassert>
+#include <vector>
+#include <iterator>
+
+bool is_palindrome(const std::string& str)
+{
+  auto res = std::mismatch(str.begin(), str.end(),
+                           str.rbegin(), str.rend());
+  return res.first == str.end();
+}
+
+int main()
+{
+  assert(is_palindrome("aba"));
+  assert(is_palindrome("abba"));
+  assert(!is_palindrome("abcd"));
+
+  std::vector<int> v1{1, 2, 3, 4};
+  std::vector<int> v2{1, 2};
+  auto res = std::mismatch(v1.begin(), v1.end(),
+	                   v2.begin(), v2.end());
+  //C++14 and above:
+  assert(res.first == std::next(v1.begin(), v2.size()) &&
+	 res.second == v2.end());
+}
+	\end{lstlisting}
+	\section{\href{https://en.cppreference.com/w/cpp/utility/functional/boyer_moore_searcher}{Boyer–Moore string-search algorithm}}
+	Note that unlike \href{https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm}{KMP}, the worst case is still $O(mn)$. It's implemented since \href{https://en.cppreference.com/w/cpp/utility/functional/boyer_moore_searcher}{C++17}. Another variation is \href{https://en.cppreference.com/w/cpp/utility/functional/boyer_moore_horspool_searcher}{Boyer–Moore–Horspool algorithm}.
+	\begin{lstlisting}
+#include <iostream>
+#include <algorithm>
+#include <functional> //std::boyer_moore_searcher
+#include <string>
+#include <cassert>
+#include <iterator>
+
+int main()
+{
+  std::string s1 = "This is a test string";
+  std::string s2 = "test";
+  std::string before = "This is a ";
+  auto res = std::search(s1.begin(), s1.end(),
+               std::boyer_moore_searcher(s2.begin(), s2.end()));
+  assert(res == std::next(s1.begin(), before.length()));
+}
+	\end{lstlisting}
 \end{document}
