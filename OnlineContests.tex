@@ -544,6 +544,56 @@ int search(vector<int>& nums, int target) {
   return -1;
 }
 	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/}{Find First and Last Position of Element in Sorted Array}}
+	Given an array of integers $nums$ sorted in non-decreasing order, find the starting and ending position of a given $target$ value.
+	\par We define $f(i, j)$ that has the index of left-most $target$ in $nums[i..j]$. On the other hand we define $g(i, j)$ that keeps the index of the right-most $target$ in $nums[i..j]$. We assume $mid_f = \lfloor \frac{left + right}{2} \rfloor$:
+	\begin{equation*}
+		f(left, right) = \begin{cases}
+			f(mid_f + 1, right) & nums[mid_f] < target \\
+			f(left, mid_f) & nums[mid_f] \ge target \\
+			left & left = right \land nums[left] = target \\
+			-1 & otherwise
+		\end{cases}
+	\end{equation*}
+	We define $mid_c = \lceil \frac{left + right}{2} \rceil$:
+	\begin{equation*}
+		g(left, right) = \begin{cases}
+			g(mid_c, right) & nums[mid_c] \le target \\
+			g(left, mid_c - 1) & nums[mid_c] > target \\
+			left & left = right \land nums[left] = target \\
+			-1 & otherwise
+		\end{cases}
+	\end{equation*}
+	Now we can use $f(0, n - 1)$ and $g(0, n - 1)$ to find the solution:
+	\begin{lstlisting}
+vector<int> searchRange(vector<int>& nums, int target) {
+  int n = nums.size();
+  int left = 0, right = n - 1;
+  
+  while (left < right)
+  {
+    int mid = (left + right) / 2;
+    if (nums[mid] < target)
+      left = mid + 1;
+    else
+      right = mid;
+  }
+  if (left > right || nums[left] != target)
+    return {-1, -1};
+  vector<int> res(1, left);
+  right = n - 1;
+  while (left < right)
+  {
+    int mid = (left + right + 1) / 2;
+    if (nums[mid] <= target)
+      left = mid;
+    else
+      right = mid - 1;
+  }
+  res.push_back(left);
+  return res;
+}
+	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
