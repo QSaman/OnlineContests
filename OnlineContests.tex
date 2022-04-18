@@ -873,6 +873,53 @@ int main()
   print(d); // 1: 300 200 100 0 1 2 3 4
 }
 	\end{lstlisting}
+	\section{std::vector iterators}
+	It uses \href{https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator}{LegacyRandomAccessIterator}. For more information refer to \href{https://en.cppreference.com/w/cpp/iterator}{Iterator library}.
+	\begin{lstlisting}
+#include <iostream>
+#include <algorithm>
+#include <iterator>
+#include <vector>
+
+template<typename Container>
+void print(const Container& c)
+{
+  const auto m_print = [](const auto& val)
+  {
+    std::cout << val << ' ';
+  };
+  std::for_each(c.begin(), c.end(), m_print);
+  std::cout << std::endl;
+}
+
+//my implementation of std::reverse 
+template<typename Container>
+void my_reverse(Container& c)
+{
+  auto left = c.begin();
+  auto right = std::prev(c.end());
+  for (; left < right; ++left, --right)
+    std::iter_swap(left, right);
+}
+
+template<typename Container>
+void my_reverse2(Container& c)
+{
+  auto left = 0;
+  auto right = std::distance(c.begin(), std::prev(c.end()));
+  for (; left < right; ++left, --right)
+    std::swap(c[left], c[right]);
+}
+
+int main()
+{
+  std::vector<int> v{0, 1, 2, 3, 4};
+  my_reverse(v);
+  print(v); // 4 3 2 1 0 
+  my_reverse2(v);
+  print(v); // 0 1 2 3 4
+}
+	\end{lstlisting}
 	\section{\href{https://en.cppreference.com/w/cpp/iterator/reverse_iterator}{std::reverse\_iterator}}
 	\label{appendix:reverse_iterator}
 	 To understand how \href{https://en.cppreference.com/w/cpp/iterator/reverse_iterator/base}{reverse\_iterator::base} works, see the following snippet. For more information refer to \href{https://en.cppreference.com/w/cpp/iterator/reverse_iterator}{std::reverse\_iterator}.
