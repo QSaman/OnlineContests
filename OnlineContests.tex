@@ -546,7 +546,9 @@ int search(vector<int>& nums, int target) {
 	\end{lstlisting}
 	\subsection{\href{https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/}{Find First and Last Position of Element in Sorted Array}}
 	Given an array of integers $nums$ sorted in non-decreasing order, find the starting and ending position of a given $target$ value.
-	\par We define $f(i, j)$ that has the index of left-most $target$ in $nums[i..j]$. On the other hand we define $g(i, j)$ that keeps the index of the right-most $target$ in $nums[i..j]$. We assume $mid_f = \lfloor \frac{left + right}{2} \rfloor$:
+	\par We define $f(i, j)$ that has the index of left-most $target$ in $nums[i..j]$. On the other hand we define $g(i, j)$ that keeps the index of the right-most $target$ in $nums[i..j]$. 
+	\par Let's assume $mid$ is index of the middle element. Both $f$ and $g$ acts similarly when $nums[mid] < target$ or $nums[mid] > target$. Let's assume $nums[mid] = target$. Since $f$ should choose the left-most target, it tries to find the answer in $nums[0..mid]$. There is a possibly that other elements with value $target$ exists in $nums[0..mid]$. On the other hand, $g$ should find the rightmost $target$. So it chooses $nums[mid..n - 1]$.
+	\par We assume $mid_f = \lfloor \frac{left + right}{2} \rfloor$:
 	\begin{equation*}
 		f(left, right) = \begin{cases}
 			f(mid_f + 1, right) & nums[mid_f] < target \\
@@ -564,7 +566,20 @@ int search(vector<int>& nums, int target) {
 			-1 & otherwise
 		\end{cases}
 	\end{equation*}
-	Now we can use $f(0, n - 1)$ and $g(0, n - 1)$ to find the solution:
+	\par Finding $mid$ becomes tricky when the size of sub-problem is 2. Let's say we are at $nums[i..i + 1]$. We know $mid_f = \lfloor \frac{i + i + 1}{2} \rfloor = i$ and $mid_c = \lceil \frac{i + i + 1}{2} \rceil = i + 1$. For $f$ choosing $mid_c$ leads to an infinite loop and for $g$ it's $mid_f$:
+	\begin{equation*}
+		\begin{split}
+			f(i, i + 1) &= \begin{cases}
+				f(mid_f + 1, i + 1) = f(i + 1, i + 1) & nums[mid_f] < target \\
+				f(i, mid_f) = f(i, i) & nums[mid_f] \ge target \\
+			\end{cases} \\
+			f(i, i + 1) &= \begin{cases}
+				f(mid_c + 1, i + 1) = f(i + 2, i + 1) & nums[mid_c] < target \\
+				f(i, mid_c) = f(i, i + 1) & nums[mid_c] \ge target \\
+			\end{cases}
+		\end{split}
+	\end{equation*}
+	Also we can think that $f$ wants to find the leftmost $target$, so it makes sense to choose $mid_f$, but $g$ wants to find the rightmost $target$ so it should choose $mid_c$. Now we can use $f(0, n - 1)$ and $g(0, n - 1)$ to find the solution:
 	\begin{lstlisting}
 vector<int> searchRange(vector<int>& nums, int target) {
   int n = nums.size();
