@@ -609,6 +609,32 @@ vector<int> searchRange(vector<int>& nums, int target) {
   return res;
 }
 	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/valid-sudoku/}{Valid Sudoku}}
+	\begin{lstlisting}
+bool isValidSudoku(vector<vector<char>>& board) {
+  array<array<bool, 10>, 9> row_seen{}, col_seen{};
+  array<array<array<bool, 10> ,3>,3> box_seen{};
+
+  for (int r = 0; r < 9; ++r)
+  {
+    for (int c = 0; c < 9; ++c)
+    {
+      if (board[r][c] == '.')
+        continue;
+      int d = board[r][c] - '0';
+      int box_row = r / 3;
+      int box_col = c / 3;
+      auto& rs = row_seen[r][d];
+      auto& cs = col_seen[c][d];
+      auto& bs = box_seen[box_row][box_col][d];
+      if (rs || cs || bs)
+        return false;
+      rs = cs = bs = true;
+    }
+  }
+  return true;
+}
+	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
@@ -1080,7 +1106,7 @@ int main()
 	\end{lstlisting}
 	\section{\href{https://en.cppreference.com/w/cpp/utility/functional/boyer_moore_searcher}{Boyer–Moore string-search algorithm}}
 	Note that unlike \href{https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm}{KMP}, the worst case is still $O(mn)$. It's implemented since \href{https://en.cppreference.com/w/cpp/utility/functional/boyer_moore_searcher}{C++17}. Another variation is \href{https://en.cppreference.com/w/cpp/utility/functional/boyer_moore_horspool_searcher}{Boyer–Moore–Horspool algorithm}.
-	\begin{lstlisting}
+	\begin{lstlisting}	
 #include <iostream>
 #include <algorithm>
 #include <functional> //std::boyer_moore_searcher
@@ -1096,6 +1122,103 @@ int main()
   auto res = std::search(s1.begin(), s1.end(),
                std::boyer_moore_searcher(s2.begin(), s2.end()));
   assert(res == std::next(s1.begin(), before.length()));
+}
+	\end{lstlisting}
+	\section{\href{https://en.cppreference.com/w/cpp/container/array}{std::array}}
+	Note that if you don't use ${}$, both std::array and c-style array are not initialized when you are using primitive type. So they can have arbitrary values.
+	\begin{lstlisting}
+#include <iostream>
+#include <array>
+#include <algorithm>
+#include <cassert>
+#include <cstring>
+
+int main()
+{
+  // a1 members are not initialized:
+  // std::array<int, 7> a;
+  // c_a members are not initialized:
+  // int c_a[7];
+  //a2 members are initialized to default:
+  std::array<int, 7> a1{};
+  // c_a1 members are initiliazed to default:
+  int c_a1[7] {};
+  for (auto i = 0; i < a1.size(); ++i)
+    assert(a1[i] == 0 && c_a1[i] == 0);
+
+  a1.fill(7);
+  std::fill(c_a1, c_a1 + 7, 7);
+  for (auto i = 0; i < a1.size(); ++i)
+    assert(a1[i] == 7 && c_a1[i] == 7);
+
+  std::array<std::array<int, 2>, 3> a2{};
+  int c_a2[3][2] = {{1, 2}, {3, 4}};
+
+  std::memcpy(a2.data(), c_a2, sizeof(c_a2));
+  for (auto i = 0; i < a2.size(); ++i)
+    for (auto j = 0; j < a2[0].size(); ++j)
+      assert(a2[i][j] == c_a2[i][j]);
+
+  assert(a2.size() == 3);
+  assert(a2[0].size() == 2);
+
+  a2.fill({4, 5});
+  for (const auto& val : a2)
+    assert(val[0] == 4 && val[1] == 5);
+  std::array<int, 3> a3 {1, 2};
+  assert(a3[0] == 1 && a3[1] == 2 && a3[2] == 0);
+}
+	\end{lstlisting}
+	\section{Initializing arrays with \href{https://en.cppreference.com/w/cpp/container/array/fill}{std::fill}, \href{https://en.cppreference.com/w/cpp/string/byte/memcpy}{memcpy} and \href{https://en.cppreference.com/w/cpp/string/byte/memset}{memset}}
+	Note that \href{https://en.cppreference.com/w/cpp/string/byte/memset}{memset} fills every byte in the buffer. If it's an array of elements bigger than 1-byte (e.g. array of integers), it does make sense to use it just for $0$ or $-1$ (in a 32-bit signed integer -1 = 0xffffffff).
+	\par Unless it's an array of elements of 1-byte (e.g. char), it's wrong to use sizeof for std::fill. Note that the first two parameters of std::fill are two pointers. One points to the first element and the other to one after the last. On the other hand we should use sizeof for memcpy and memset.
+	\begin{lstlisting}
+#include <iostream>
+#include <array>
+#include <algorithm>
+#include <cassert>
+#include <cstring>
+
+int main()
+{
+  std::array<int, 3> a1{};
+  assert(sizeof(a1) == sizeof(int) * 3);
+  std::fill(a1.data(), a1.data() + 3, -20);
+  for (const auto& val : a1)
+    assert(val == -20);
+
+  std::array<std::array<int, 2>, 3> a2{};
+  int c_a2[3][2] = {{1, 2}, {3, 4}};
+
+  std::fill(&a2[0][0], &a2[1][0], 7);
+  std::fill(&a2[1][0], &a2[2][0], 8);
+  std::fill(&a2[2][0], &a2[2][0] + 2, 9);
+  for (int i = 0; i < a2.size(); ++i)
+    if (i == 0)
+      assert(a2[i][0] == 7 && a2[i][1] == 7);
+    else if (i == 1)
+      assert(a2[i][0] == 8 && a2[i][1] == 8);
+    else
+      assert(a2[i][0] == 9 && a2[i][1] == 9);
+
+  assert(sizeof(a2) == sizeof(int) * 2 * 3);
+  // Note that &a2[0] is a pointer to std::array<int, 2>
+  std::fill(&a2[0][0], &a2[0][0] + 2 * 3, 15);
+  for (const auto& val : a2)
+    assert(val[0] == 15 && val[1] == 15);
+
+  std::memcpy(a2.data(), c_a2, sizeof(c_a2));
+  for (auto i = 0; i < a2.size(); ++i)
+    for (auto j = 0; j < a2[0].size(); ++j)
+      assert(a2[i][j] == c_a2[i][j]);
+
+  std::memset(a2.data(), -1, sizeof(a2));
+  for (const auto& val : a2)
+    assert(val[0] == -1 && val[1] == -1);
+
+  std::memset(a2.data(), 1, sizeof(a2));
+  for (const auto& val : a2)
+    assert(val[0] == 0x01010101 && val[1] == 0x01010101);
 }
 	\end{lstlisting}
 \end{document}
