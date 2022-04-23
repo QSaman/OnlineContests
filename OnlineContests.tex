@@ -1178,12 +1178,13 @@ int main()
 #include <algorithm>
 #include <cassert>
 #include <cstring>
+#include <iterator>
 
 int main()
 {
   std::array<int, 3> a1{};
   assert(sizeof(a1) == sizeof(int) * 3);
-  std::fill(a1.data(), a1.data() + 3, -20);
+  std::fill(a1.begin(), a1.end(), -20);
   for (const auto& val : a1)
     assert(val == -20);
 
@@ -1192,7 +1193,7 @@ int main()
 
   std::fill(&a2[0][0], &a2[1][0], 7);
   std::fill(&a2[1][0], &a2[2][0], 8);
-  std::fill(&a2[2][0], &a2[2][0] + 2, 9);
+  std::fill_n(&a2[2][0], 2, 9);
   for (int i = 0; i < a2.size(); ++i)
     if (i == 0)
       assert(a2[i][0] == 7 && a2[i][1] == 7);
@@ -1201,6 +1202,23 @@ int main()
     else
       assert(a2[i][0] == 9 && a2[i][1] == 9);
 
+  std::fill(a2.begin()->begin(),
+            std::next(a2.begin())->begin(),
+            10);
+  std::fill(std::next(a2.begin())->begin(),
+            std::next(a2.begin(), 2)->begin(),
+            11);
+  std::fill(std::next(a2.begin(), 2)->begin(),
+            std::prev(a2.end())->end(),
+            12);
+  for (int i = 0; i < a2.size(); ++i)
+    if (i == 0)
+      assert(a2[i][0] == 10 && a2[i][1] == 10);
+    else if (i == 1)
+      assert(a2[i][0] == 11 && a2[i][1] == 11);
+    else
+      assert(a2[i][0] == 12 && a2[i][1] == 12);
+
   assert(sizeof(a2) == sizeof(int) * 2 * 3);
   // Note that &a2[0] is a pointer to std::array<int, 2>
   std::fill(&a2[0][0], &a2[0][0] + 2 * 3, 15);
@@ -1208,6 +1226,15 @@ int main()
     assert(val[0] == 15 && val[1] == 15);
 
   std::memcpy(a2.data(), c_a2, sizeof(c_a2));
+  for (auto i = 0; i < a2.size(); ++i)
+    for (auto j = 0; j < a2[0].size(); ++j)
+      assert(a2[i][j] == c_a2[i][j]);
+
+  std::fill_n(a2.begin()->begin(), 2 * 3, 16);
+  for (const auto& val : a2)
+    assert(val[0] == 16 && val[1] == 16);
+
+  std::copy_n(&c_a2[0][0], 2 * 3, a2.begin()->begin());
   for (auto i = 0; i < a2.size(); ++i)
     for (auto j = 0; j < a2[0].size(); ++j)
       assert(a2[i][j] == c_a2[i][j]);
