@@ -635,6 +635,35 @@ bool isValidSudoku(vector<vector<char>>& board) {
   return true;
 }
 	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/multiply-strings/}{Multiply Strings}}
+	Given two non-negative integers $num1$ and $num2$ represented as strings, return the product of num1 and num2, also represented as a string.
+	\par Let's assume the size of $num1$ is $n1$ and the size of $num2$ is $n2$. The result has at most $n1 + n2$ digits. We use mathematical induction. We assume we know how to solve the problem for every $num1$ of any size and $num2$ for sizes less than $n2$. Now we want to calculate the result when $num2$ has size $n2$. We use mathematical induction to calculate $num1[0..n1 - 1]$ and $num2[1..n2 - 1]$. Let's assume the answer is in $res[1..n1 + n2 - 1]$. We assume $res[0] = 0$. Now we use the induction to calculate the result of $num1[0..n1 - 1]$ and $num2[0..n2 - 1]$. For $0 \le i \le n1 - 1$ we have:
+	\begin{equation*}
+		\begin{split}
+			res[i + 1] &= (res[i + 1] + num1[i] \times num2[0]) \bmod 10 \\
+			res[i] &= res[i] + \lfloor \frac{res[i + 1] + num1[i] \times num2[0]}{10} \rfloor 
+		\end{split}
+	\end{equation*}
+	Note that $res[i]$ keeps the carry. It's possible it goes above $9$ but after the algorithm finishes, it has the correct digit.
+	\begin{lstlisting}
+string multiply(string num1, string num2) {
+  string res(num1.length() + num2.length(), '0');
+  for (int i = num1.length() - 1; i >= 0; --i)
+  {
+    for (int j = num2.length() - 1; j >= 0; --j)
+    {
+      int t = (num1[i] - '0') * (num2[j] - '0') + 
+              res[i + j + 1] - '0';
+      res[i + j + 1] = t % 10 + '0';
+      res[i + j] += t / 10;
+    }
+  }
+  int i = 0;
+  for (;i < res.length() - 1 && res[i] == '0'; ++i);
+  res = res.substr(i);
+  return res;
+}
+	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
@@ -956,6 +985,8 @@ int find(string A)
 	\end{lstlisting}
 	\appendix
 	\chapter{C++ refresher}
+	\section{\href{https://en.wikipedia.org/wiki/Associative_array}{Associative containers}}
+	\subsection{\href{https://en.cppreference.com/w/cpp/container/set}{std::set}}
 	\section{Inserting into a container}
 	The following code uses most insert operations:
 	\begin{lstlisting}
