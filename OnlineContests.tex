@@ -664,6 +664,37 @@ string multiply(string num1, string num2) {
   return res;
 }
 	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/jump-game-ii/}{Jump Game II}}
+	Given an array of non-negative integers $nums$, you are initially positioned at the first index of the array. Each element in the array represents your maximum jump length at that position. Your goal is to reach the last index in the minimum number of jumps. You can assume that you can always reach the last index.
+	\par This is one application of \href{https://en.wikipedia.org/wiki/Breadth-first_search}{BFS}. The graph is created in a special way that it's easy to implement it in $O(V)$ instead of $O(V + E)$.
+	\par If we run a BFS on this graph, we will have a BFS tree. The level of the root (index 0) is 0. The level of the childern of the root are 1 and so on. The answer is to find the level of the last element in a BFS tree.
+	\par We define $upper\_index[i]$ as the rightmost index of level $i$:
+	\begin{itemize}
+		\item level 0 starts at $upper\_index[0]$ and ends at $upper\_index[0]$ ($uuper\_index[0] = 0$)
+		\item level 1 starts at $upper\_index[0] + 1$ and ends at $upper\_index[1]$
+		\item level $i > 0$ starts at $upper\_index[i - 1] + 1$ and ends at $upper\_index[i]$
+	\end{itemize}
+	We know $upper\_index[0] = 0$. For $i \ge 1$ we assume $upper\_index[i - 1] + 1 \le j \le upper\_index[i]$, then we have:
+	\begin{equation*}
+		upper\_index[i + 1] = \max{(nums[j])}
+	\end{equation*}
+	Since $upper\_index$ increases for next levels, we can assume $0 \le j \le upper\_index[i]$. So for caluclating $upper\_index[i + 1]$ we just need to know $upper\_index[i]$. That means we can avoid an array and store them in two variables $upper\_index$ and $next\_upper\_index$:
+	\begin{lstlisting}
+int jump(vector<int>& nums) {
+  int upper_index = 0, next_upper_index = 0;
+  int d = 0;
+  for (int u = 0; u < nums.size(); ++u)
+  {
+    if (u > upper_index)
+    {
+      ++d;
+      upper_index = next_upper_index;
+    }            
+    next_upper_index = max(next_upper_index, u + nums[u]);
+  }
+  return d;
+}
+	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
