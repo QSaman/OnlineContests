@@ -695,6 +695,41 @@ int jump(vector<int>& nums) {
   return d;
 }
 	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/rotate-image/}{Rotate Image}}
+	You are given an $n \times n$ 2D $matrix$ representing an image, rotate the image \textbf{in-place} by $90$ degrees (clockwise)
+	\par Let's consider a $3 \times 3$ image and rotate it $90$ degrees:
+	\begin{equation*}
+		\begin{matrix}
+			a_{00} & a_{01} & a_{02} \\
+			a_{10} & a_{11} & a_{12} \\
+			a_{20} & a_{21} & a_{22}
+		\end{matrix} \implies
+		\begin{matrix}
+			a_{20} & a_{10} & a_{00} \\
+			a_{21} & a_{11} & a_{01} \\
+			a_{22} & a_{12} & a_{02}
+		\end{matrix}	
+	\end{equation*}
+	Let's assume the image is $m$ and the rotated image is $r$, then we have:
+	\begin{equation*}
+		m[i][j] = r[n - 1 - j][i]
+	\end{equation*}
+	For solving this problem first we do a \href{https://en.wikipedia.org/wiki/Transpose}{transpose} and then a reflect:
+	\begin{equation*}
+		m[i][j] = m^{\prime}[j][i] = r[n - 1 - j][i]
+	\end{equation*}
+	\begin{lstlisting}
+void rotate(vector<vector<int>>& matrix) {
+  const auto n = matrix.size();
+  for (int i = 0; i < n; ++i)
+    for (int j = i; j < n; ++j)
+      swap(matrix[i][j], matrix[j][i]);
+  const int half = n / 2;
+  for (int i = 0; i < n; ++i)
+    for (int j = 0; j < half; ++j)
+      swap(matrix[i][j], matrix[i][n - 1 - j]);
+}
+	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
