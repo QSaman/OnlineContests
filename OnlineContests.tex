@@ -664,13 +664,26 @@ string multiply(string num1, string num2) {
   return res;
 }
 	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/jump-game/}{Jump Game}}
+	You are given an integer array nums. You are initially positioned at the array's first index, and each element in the array represents your maximum jump length at that position.	Return true if you can reach the last index, or false otherwise.
+	\par For explanation refer to \ref{subsec:jump_game_ii}.
+	\begin{lstlisting}
+bool canJump(vector<int>& nums) {
+  int u;
+  int upper_index = nums[0];
+  for (u = 1; u <= upper_index && u < nums.size(); ++u)
+    upper_index = max(upper_index, u + nums[u]);
+  return upper_index >= nums.size() - 1;
+}
+	\end{lstlisting}
 	\subsection{\href{https://leetcode.com/problems/jump-game-ii/}{Jump Game II}}
+	\label{subsec:jump_game_ii}
 	Given an array of non-negative integers $nums$, you are initially positioned at the first index of the array. Each element in the array represents your maximum jump length at that position. Your goal is to reach the last index in the minimum number of jumps. You can assume that you can always reach the last index.
 	\par This is one application of \href{https://en.wikipedia.org/wiki/Breadth-first_search}{BFS}. The graph is created in a special way that it's easy to implement it in $O(V)$ instead of $O(V + E)$.
 	\par If we run a BFS on this graph, we will have a BFS tree. The level of the root (index 0) is 0. The level of the childern of the root are 1 and so on. The answer is to find the level of the last element in a BFS tree.
 	\par We define $upper\_index[i]$ as the rightmost index of level $i$:
 	\begin{itemize}
-		\item level 0 starts at $upper\_index[0]$ and ends at $upper\_index[0]$ ($uuper\_index[0] = 0$)
+		\item level 0 starts at $upper\_index[0]$ and ends at $upper\_index[0]$ ($upper\_index[0] = 0$)
 		\item level 1 starts at $upper\_index[0] + 1$ and ends at $upper\_index[1]$
 		\item level $i > 0$ starts at $upper\_index[i - 1] + 1$ and ends at $upper\_index[i]$
 	\end{itemize}
@@ -728,6 +741,46 @@ void rotate(vector<vector<int>>& matrix) {
   for (int i = 0; i < n; ++i)
     for (int j = 0; j < half; ++j)
       swap(matrix[i][j], matrix[i][n - 1 - j]);
+}
+	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/spiral-matrix/}{Spiral Matrix}}
+	Given an $m \times n$ matrix, return all elements of the matrix in spiral order.
+	\par This is an implementation question:
+	\begin{lstlisting}
+int dir[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+
+vector<int> spiralOrder(vector<vector<int>>& matrix) {
+  int m = matrix.size();
+  int n = matrix[0].size();
+  int up = 0, bottom = m - 1, left = 0, right = n - 1;
+  int cells = 0;
+  int r = 0, c = -1;
+  vector<int> res;
+  while (cells < m * n)
+  {
+    for (int i = 0; i < 4; ++i)
+    {
+      int nr = r + dir[i][0];
+      int nc = c + dir[i][1];
+      while (nr <= bottom && nr >= up && nc <= right && nc >= left)
+      {
+        ++cells;
+        r = nr, c = nc;
+        res.push_back(matrix[r][c]);
+        nr += dir[i][0];
+        nc += dir[i][1];
+      }
+      if (i == 0)
+        ++up;
+      else if (i == 1)
+        --right;
+      else if (i == 2)
+        --bottom;
+      else
+        ++left;
+    }
+  }
+  return res;
 }
 	\end{lstlisting}
 	\chapter{HackerRank}
@@ -1051,8 +1104,51 @@ int find(string A)
 	\end{lstlisting}
 	\appendix
 	\chapter{C++ refresher}
+	\section{\href{https://en.cppreference.com/w/cpp/utility/tuple}{std::tuple}}
+	
+	\subsection{\href{https://en.cppreference.com/w/cpp/utility/tuple/tie}{std::tie}}
+	Creates a tuple of lvalue references to its arguments or instances of std::ignore
 	\section{\href{https://en.wikipedia.org/wiki/Associative_array}{Associative containers}}
 	\subsection{\href{https://en.cppreference.com/w/cpp/container/set}{std::set}}
+	\begin{lstlisting}
+#include <iostream>
+#include <algorithm>
+#include <cassert>
+#include <set>
+#include <tuple>
+#include <array>
+
+int main()
+{
+  std::set<int> s({1, 2, 3, 4, 5, 6, 7});
+  assert(s.count(7) == 1);
+  assert(s.count(8) == 0);
+  bool result;
+  std::set<int>::iterator iter;
+  std::tie(iter, result) = s.insert(8);
+  assert(result == true && *iter == 8 && s.count(8) == 1);
+  std::tie(std::ignore, result) = s.insert(9);
+  assert(result = true && s.count(9) == 1);
+
+  std::array<int, 6> a = {10, 11, 12, 13, 14, 15};
+  s.insert(a.begin(), a.end());
+  assert(s.count(10) == 1);
+
+  iter = s.find(13);
+  assert(iter != s.end());
+
+  iter = s.lower_bound(4);
+  assert(*iter == 4);
+  iter = s.upper_bound(4);
+  assert(*iter == 5);
+
+  s = {1, 2, 4, 5};
+  iter = s.lower_bound(3);
+  assert(*iter == 4);
+  iter = s.upper_bound(3);
+  assert(*iter == 4);
+}
+	\end{lstlisting}
 	\section{Inserting into a container}
 	The following code uses most insert operations:
 	\begin{lstlisting}
