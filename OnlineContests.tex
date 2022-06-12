@@ -745,39 +745,42 @@ void rotate(vector<vector<int>>& matrix) {
 	\end{lstlisting}
 	\subsection{\href{https://leetcode.com/problems/spiral-matrix/}{Spiral Matrix}}
 	Given an $m \times n$ matrix, return all elements of the matrix in spiral order.
-	\par This is an implementation question:
+	\par This is an implementation question. For another variant look at \href{https://leetcode.com/problems/spiral-matrix-ii/submissions/}{Spiral Matrix II}
 	\begin{lstlisting}
+// right, down, left, up: 
+// dir[i][0]: delta for row
+// dir[i][1]: delta for col
 int dir[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+// dir[i][0] = top, dir[i][1] = left, 
+// dir[i][2] = bottom and dir[i][3] = right
+int box[4][4] = {{1, 0, 0, 0}, {0, 0, 0, -1}, {0, 0, -1, 0}, {0, 1, 0, 0}};
 
 vector<int> spiralOrder(vector<vector<int>>& matrix) {
-  int m = matrix.size();
-  int n = matrix[0].size();
-  int up = 0, bottom = m - 1, left = 0, right = n - 1;
-  int cells = 0;
+  int rows = matrix.size();
+  int cols = matrix[0].size();
+  const int cells = rows * cols;
+  int top = 0, bottom = rows - 1, left = 0, right = cols - 1;
+  int cur_cell = 0;
   int r = 0, c = -1;
   vector<int> res;
-  while (cells < m * n)
+  while (cur_cell < cells)
   {
     for (int i = 0; i < 4; ++i)
     {
       int nr = r + dir[i][0];
       int nc = c + dir[i][1];
-      while (nr <= bottom && nr >= up && nc <= right && nc >= left)
+      while (nr <= bottom && nr >= top && nc <= right && nc >= left)
       {
-        ++cells;
+        ++cur_cell;
         r = nr, c = nc;
         res.push_back(matrix[r][c]);
         nr += dir[i][0];
         nc += dir[i][1];
       }
-      if (i == 0)
-        ++up;
-      else if (i == 1)
-        --right;
-      else if (i == 2)
-        --bottom;
-      else
-        ++left;
+      top += box[i][0];
+      left += box[i][1];
+      bottom += box[i][2];
+      right += box[i][3];
     }
   }
   return res;
