@@ -783,6 +783,44 @@ vector<int> spiralOrder(vector<vector<int>>& matrix) {
   return res;
 }
 	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/insert-interval/}{Insert Interval}}
+	You are given an array of non-overlapping intervals that is sorted in ascending order by start points. You are given a new interval. Insert it into intervals such that they remain sorted and without overlaps.
+	\par The tricky part of this question is to find out when two intervals $i_1$ and $i_2$ have overlap. To find the answer it's easier to find out when they don't overlap:
+	\begin{equation*}
+		\begin{split}
+			\neg overlap(i_1, i_2) &= \\
+			& right(i_1) < left(i_2) \lor left(i_1) > right(i_2)
+		\end{split}
+	\end{equation*}
+	So we can calculate $overlap(i_1, i_2)$ as:
+	\begin{equation*}
+	\begin{split}
+		overlap(i_1, i_2) &= \\
+		& right(i_1) \ge left(i_2) \land left(i_1) \le right(i_2)
+	\end{split}
+\end{equation*}	
+	So the answer is:
+	\begin{lstlisting}
+vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+  int i;
+  vector<vector<int>> res;
+  for (i = 0; i < intervals.size() && intervals[i][1] < newInterval[0]; ++i)
+    res.push_back(intervals[i]);
+  auto left = newInterval[0];
+  auto right = newInterval[1];
+  //intervals[i][1] >= newInterval[0]
+  for (; i < intervals.size() &&
+         intervals[i][0] <= right; ++i)
+  {
+    left = min(left, intervals[i][0]);
+    right = max(right, intervals[i][1]);
+  }
+  res.push_back({left, right});
+  for (; i < intervals.size(); ++i)
+    res.push_back(intervals[i]);
+  return res;
+}
+	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
