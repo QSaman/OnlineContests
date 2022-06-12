@@ -799,7 +799,7 @@ vector<int> spiralOrder(vector<vector<int>>& matrix) {
 		& right(i_1) \ge left(i_2) \land left(i_1) \le right(i_2)
 	\end{split}
 \end{equation*}	
-	So the answer is:
+	For another similar problem look at \href{https://leetcode.com/problems/merge-intervals/}{Merge Intervals}. The implementation:
 	\begin{lstlisting}
 vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
   int i;
