@@ -827,7 +827,7 @@ vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInter
 	\end{lstlisting}
 	\subsection{\href{https://leetcode.com/problems/rotate-list/}{Rotate List}}
 	Given the head of a linked list, rotate the list to the right by k places.
-	\par This is an implementation problem:
+	\par This is an implementation problem. We can easily find out the $k^{th}$ element from the end of the list will become the first element after the rotation ($k = 1$ means last element). So we just need to find the last element and the parent of new head and modify them.
 	\begin{lstlisting}
 tuple<int, ListNode*> find_size_and_last_node(ListNode* node)
 {
