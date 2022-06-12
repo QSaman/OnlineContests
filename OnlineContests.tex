@@ -784,8 +784,9 @@ vector<int> spiralOrder(vector<vector<int>>& matrix) {
 }
 	\end{lstlisting}
 	\subsection{\href{https://leetcode.com/problems/insert-interval/}{Insert Interval}}
+	\label{subsec:insert_interval}
 	You are given an array of non-overlapping intervals that is sorted in ascending order by start points. You are given a new interval. Insert it into intervals such that they remain sorted and without overlaps.
-	\par The tricky part of this question is to find out when two intervals $i_1$ and $i_2$ have overlap. To find the answer it's easier to find out when they don't overlap:
+	\par For another variant of this problem refer to \ref{sec:painting_a_pole}. The tricky part of this question is to find out when two intervals $i_1$ and $i_2$ have overlap. To find the answer it's easier to find out when they don't overlap:
 	\begin{equation*}
 		\begin{split}
 			\neg overlap(i_1, i_2) &= \\
@@ -1139,6 +1140,62 @@ int find(string A)
   int palindromeLen = j;
   return A.length() + A.length() - palindromeLen; 
 }	
+	\end{lstlisting}
+	\chapter{Miscellaneous}	
+	\section{Painting a pole}
+	\label{sec:painting_a_pole}
+	Suppose we have a pole of length 10. Each time we select an interval of length 1 and paint the entire interval. The goal is to paint the entire pole. For example we select interval $[1.5, 2.5]$ and paint it and so on. We have a stream of paint operation. Each paint operation choose an interval and paint it. So we should have at least tow functions $void paint(double paint_point)$ and $bool is_painted()$. The former select an interval and paint it. The latter examine whether the entire pole is painted.
+	\par This is a special case of interval merging problem. For more information refer to \ref{subsec:insert_interval}. We can call $paint$ many times. The trivial solution is each time this function is called, we try to add the interval and merge with others if possible. It's easier this set of intervals is sorted based on the start point of intervals. Since we can add new interval using $paint$ function, keep the list sorted can be challenging.
+	\par Since the length of pole is 10 and each interval has the length of 1, we can create 10 segments (buckets) ($\frac{10}{1} = 10$. If the interval length is 2, then we create 5 segments: $\frac{10}{2} = 5$).
+	\par Since the length of both intervals and segments are 1, each segment has at most two intervals. For $i^{th}$ segment we define the following variables:
+	\begin{itemize}
+		\item $left_i$: means $[left_i, i + 1]$ is painted
+		\item $right_i$: means $[i, right_i]$ is painted
+	\end{itemize}
+	Before painting starts, the $i^{th}$ segment has values $left_i = i + 1$ and $right_i = i$. We can examine it's entirely painted if $left_i \le right_i$.
+	\begin{lstlisting}
+struct Segment
+{
+  //From left to the end of segment:
+  int left;
+  //From the beginning to the right of segment
+  int right;
+};
+
+vector<Segment> segments(10);
+
+void init()
+{
+  for (int i = 0; i < segments.size(); ++i)
+  {
+    segments[i].left = i + 1;
+    segments[i].right = i;
+  }
+}
+
+void paint(double paint_point)
+{
+  if (paint_point < 0 || paint_point > 10)
+    return;
+  int segment_index = floor(paint_point);
+  int next_segment_index = floor(paint_point + 1);
+  auto& left = segments[segment_index].left;
+  if (paint_point < left)
+    left = paint_point;
+  if (next_segment_index >= 10)
+    return;
+  auto& right = segments[next_segment_index].right;
+  if ((paint_point + 1) > right)
+    right = paint_point + 1;
+}
+
+bool is_painted()
+{
+  for (const auto& segment : segments)
+    if (segment.left > segment.right)
+      return false;
+  return true;
+}
 	\end{lstlisting}
 	\appendix
 	\chapter{C++ refresher}
