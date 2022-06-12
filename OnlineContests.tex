@@ -825,6 +825,42 @@ vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInter
   return res;
 }
 	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/rotate-list/}{Rotate List}}
+	Given the head of a linked list, rotate the list to the right by k places.
+	\par This is an implementation problem:
+	\begin{lstlisting}
+tuple<int, ListNode*> find_size_and_last_node(ListNode* node)
+{
+  int len = 0;
+  ListNode* parent = nullptr;
+  for (; node != nullptr; ++len, node = node->next)
+    parent = node;
+  return make_tuple(len, parent);
+}
+
+ListNode* find_from_last(ListNode* node, int size, int k)
+{
+  for (int i = 0; node != nullptr; ++i, node = node->next)
+    if (size - i == k)
+      return node;
+  return nullptr;
+}
+ListNode* rotateRight(ListNode* head, int k) {
+  if (head == nullptr)
+    return head;
+  int size;
+  ListNode* last_node;
+  tie(size, last_node) = find_size_and_last_node(head);
+  k = k % size;
+  if (k == 0)
+    return head;
+  auto new_head_parent = find_from_last(head, size, k + 1);
+  auto new_head = new_head_parent->next;
+  new_head_parent->next = nullptr;
+  last_node->next = head;
+  return new_head;
+}
+	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
