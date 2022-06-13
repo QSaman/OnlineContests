@@ -861,6 +861,82 @@ ListNode* rotateRight(ListNode* head, int k) {
   return new_head;
 }
 	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/unique-paths/}{Unique Paths}}
+	There is a robot on an $m \times n$ grid. The robot is initially located at the top-left corner (i.e., grid[0][0]). The robot tries to move to the bottom-right corner (i.e., grid[m - 1][n - 1]). The robot can only move either down or right at any point in time. Given the two integers m and n, return the number of possible unique paths that the robot can take to reach the bottom-right corner.
+	\par There are two solutions:
+	\subsubsection{Dynamic programming}
+	Let's say cnt[r][c] is the number of ways to reach from $(0, 0)$ to $(r, c)$. We have:
+	\begin{equation*}
+		cnt[r, c] = \begin{cases}
+			cnt[r - 1, c] + cnt[r, c - 1] & r > 0 \land c > 0 \\
+			1 & r = 0 \lor c = 0
+		\end{cases}
+	\end{equation*}
+	So the implementation is:
+	\begin{lstlisting}
+int uniquePaths(int m, int n) {
+  auto cnt = vector<vector<int>>(m, vector<int>(n, 1));
+  for (int r = 1; r < m; ++r)
+    for (int c = 1; c < n; ++c)
+    {
+      cnt[r][c] = cnt[r - 1][c] + cnt[r][c - 1];
+    }
+  return cnt[m - 1][n - 1];
+}
+	\end{lstlisting}
+	It's trivial to optimize memory and convert $cnt$ to a 1-dimensional array:
+	\begin{lstlisting}
+int uniquePaths(int m, int n) {
+  auto cnt = vector<int>(n, 1);
+  cnt[0] = 1;
+  for (int r = 1; r < m; ++r)
+    for (int c = 1; c < n; ++c)
+    {
+      cnt[c] += cnt[c - 1];
+    }
+  return cnt[n - 1];
+}
+	\end{lstlisting}
+	\subsubsection{\href{https://en.wikipedia.org/wiki/Permutation\#Permutations_with_repetition}{Permutations with repetition}}
+	We can simply calculate to find the answer. Let's assume $m \ge n$:
+	\begin{equation*}
+		\begin{split}
+		ans &= \begin{pmatrix}
+			m + n - 2 \\
+			m - 1,n - 1
+		\end{pmatrix} \\
+		&= \frac{(m + n -2)!}{(m - 1)! \times (n - 1)!} \\
+		&= \frac{(m + n - 2) \times \dots \times (m - 2)}{(n - 1)!}
+		\end{split}
+	\end{equation*}
+	To avoid overflow, we should do more. For simplicity consider the following permutation (again $m \ge n$):
+	\begin{equation*}
+		\begin{split}
+			&\begin{pmatrix}
+				m + n \\
+				m, n				
+			\end{pmatrix} \\
+		&= \frac{(m + n) \times (m + 1) \times \dots \times m!}{m! \times n!} \\
+		&= \frac{(m + 1) \times (m + 2) \times \dots (m + n)}{1 \times \dots \times n}
+		\end{split}
+	\end{equation*}
+	Since $m + 1$ to $m + n$ are $n$ consecutive numbers, there is at least one number among them that is divisible by $1 \le i \le n$. We know that if $a$ is divisible by $c$ and $d$, then we can say $a$ is divisible by $b \times c$. We can use this fact to easily calculate permutation with repetitions:
+	\begin{lstlisting}
+int uniquePaths(int M, int N) {
+  auto m = max(M, N) - 1;
+  auto n = min(M, N) - 1;
+  const auto mn = m * n;
+  
+  // for values like m = 51 and n = 9 we cannot use 32-bit integer:
+  int64_t res = 1;
+  for (int i = 1; i <= n; ++i)
+  {
+    res *= m + i;
+    res /= i;
+  }
+  return static_cast<int>(res);
+}
+	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
