@@ -920,7 +920,17 @@ int uniquePaths(int m, int n) {
 		&= \frac{(m + 1) \times (m + 2) \times \dots (m + n)}{1 \times \dots \times n}
 		\end{split}
 	\end{equation*}
-	Since $m + 1$ to $m + n$ are $n$ consecutive numbers, there is at least one number among them that is divisible by $1 \le i \le n$. We know that if $a$ is divisible by $c$ and $d$, then we can say $a$ is divisible by $b \times c$. We can use this fact to easily calculate permutation with repetitions:
+	Since $m + 1$ to $m + n$ are $n$ consecutive numbers, there is at least one number among them that is divisible by $1 \le i \le n$. We know that if $a$ is divisible by $b$ and $c$ id divisible by $d$, then $a \times c$ is divisible by $b \times d$:
+	\begin{equation*}
+		\begin{split}
+			a &= bq \\
+			c &= dq^{\prime} \\
+			a \times c &= bq \times dq^{\prime} \\
+			a \times c &= b \times d \times (q \times q^{\prime})
+		\end{split}
+	\end{equation*}
+	
+	We can use this fact to easily calculate permutation with repetitions:
 	\begin{lstlisting}
 int uniquePaths(int M, int N) {
   auto m = max(M, N) - 1;
