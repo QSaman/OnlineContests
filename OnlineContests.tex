@@ -920,17 +920,14 @@ int uniquePaths(int m, int n) {
 		&= \frac{(m + 1) \times (m + 2) \times \dots (m + n)}{1 \times \dots \times n}
 		\end{split}
 	\end{equation*}
-	Since $m + 1$ to $m + n$ are $n$ consecutive numbers, there is at least one number among them that is divisible by $1 \le i \le n$. We know that if $a$ is divisible by $b$ and $c$ id divisible by $d$, then $a \times c$ is divisible by $b \times d$:
+	Since $m + 1$ to $m + n$ are $n$ consecutive numbers, there is at least one number among them that is divisible by $1 \le i \le n$. For $1 \le i \le n$ we have:
 	\begin{equation*}
-		\begin{split}
-			a &= bq \\
-			c &= dq^{\prime} \\
-			a \times c &= bq \times dq^{\prime} \\
-			a \times c &= b \times d \times (q \times q^{\prime})
-		\end{split}
+		\begin{pmatrix}
+			m + i \\
+			m, i
+		\end{pmatrix} = \frac{(m + 1) \times \dots \ (m + i)}{1 \times \dots \times i}
 	\end{equation*}
-	
-	We can use this fact to easily calculate permutation with repetitions:
+	To avoid overflow we can start from $i=1$ and increment $i$ until we reach $n$. The division shouldn't have any remainder:
 	\begin{lstlisting}
 int uniquePaths(int M, int N) {
   auto m = max(M, N) - 1;
@@ -945,6 +942,54 @@ int uniquePaths(int M, int N) {
     res /= i;
   }
   return static_cast<int>(res);
+}
+	\end{lstlisting}
+	\subsubsection{\href{https://leetcode.com/problems/unique-paths-ii/}{Unique Paths II}}
+	You are given an m x n integer array grid. There is a robot initially located at the top-left corner (i.e., grid[0][0]). The robot tries to move to the bottom-right corner (i.e., grid[m-1][n-1]). The robot can only move either down or right at any point in time. An obstacle and space are marked as 1 or 0 respectively in grid. A path that the robot takes cannot include any square that is an obstacle. Return the number of possible unique paths that the robot can take to reach the bottom-right corner.
+	\par We use dynamic programming. We assume $a[0..m-1, 0..n-1]$ is obstacleGrid. We define $dp[0..m, 0..n]$ as:
+	\begin{equation*}
+		dp[i, j] = \begin{cases}
+			dp[i - 1, j] + dp[i, j -1] & a[i, j] \ne 1 \\
+			0 & a[i, j] = 1 \\
+			1 & i = 0 \land j = 1 \\
+			0 & i = 0 \lor j = 0
+		\end{cases}
+	\end{equation*}
+	So the answer for $a[i, j]$ is $dp[i + 1, j + 1]$. Since the destination is cell $m-1, n - 1$, the final answer is $dp[m, n]$:
+	\begin{lstlisting}
+int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+  const int m = obstacleGrid.size();
+  const int n = obstacleGrid[0].size();
+  auto dp = vector<vector<int>>(m + 1, vector<int>(n + 1, 0));
+  //dp[1][1] should be 1, unless there is an obstacle
+  dp[0][1] = 1;
+  for (int i = 0; i < m; ++i)
+    for (int j = 0; j < n; ++j)
+    {
+      if (obstacleGrid[i][j] == 1)
+        dp[i + 1][j + 1] = 0;
+      else
+        dp[i + 1][j + 1] = dp[i][j + 1] + dp[i + 1][j];
+    }
+  return dp[m][n];
+}
+	\end{lstlisting}
+	As before we can save memory:
+	\begin{lstlisting}
+int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+  const int m = obstacleGrid.size();
+  const int n = obstacleGrid[0].size();
+  auto dp = vector<int>(n + 1, 0);
+  dp[1] = 1;
+  for (int i = 0; i < m; ++i)
+    for (int j = 0; j < n; ++j)
+    {
+      if (obstacleGrid[i][j] == 1)
+        dp[j + 1] = 0;
+      else
+        dp[j + 1] += dp[j];
+    }
+  return dp[n];
 }
 	\end{lstlisting}
 	\chapter{HackerRank}
