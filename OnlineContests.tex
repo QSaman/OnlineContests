@@ -992,6 +992,31 @@ int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
   return dp[n];
 }
 	\end{lstlisting}
+	\subsubsection{\href{https://leetcode.com/problems/minimum-path-sum/}{Minimum Path Sum}}
+	Given a $m \times n$ grid filled with non-negative numbers, find a path from top left to bottom right, which minimizes the sum of all numbers along its path. You can only move either down or right at any point in time.
+	\par Instead of Dijkstra shortest path algorithm, we can use a simple dynamic programming approach. Suppose we have $grid[0..m -1, 0..n - 1]$. We define $d[0..m, 0..n]$ as:
+	\begin{equation*}
+		d[i, j] = \begin{cases}
+			\min(d[i - 1, j], d[i, j - 1]) + grid[i - 1, j - 1] & i > 0 \land j > 0 \\
+			\infty & i = 0 \lor j = 0 \\
+			grid[0, 0] & i = 1 \land j = 1
+		\end{cases}
+	\end{equation*}
+	The implementation:
+	\begin{lstlisting}
+int minPathSum(vector<vector<int>>& grid) {
+  const int m = grid.size();
+  const int n = grid[0].size();
+  const int inf = m * n * 100 + 1;
+  auto d = vector<vector<int>>(m + 1, vector<int>(n + 1, inf));
+  // To make sure d[1][1] = grid[0][0]:
+  d[0][1] = d[1][0] = 0;
+  for (int i = 0; i < m; ++i)
+    for (int j = 0; j < n; ++j)
+      d[i + 1][j + 1] = min(d[i][j + 1], d[i + 1][j]) + grid[i][j];
+  return d[m][n];
+}
+	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
