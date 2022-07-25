@@ -1087,6 +1087,64 @@ string simplifyPath(string path) {
   return res.empty() ? "/" : res;
 }
 	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/set-matrix-zeroes/}{Set Matrix Zeroes}}
+	\subsubsection{$O(m + n)$ space complexity}
+	\begin{lstlisting}
+void setZeroes(vector<vector<int>>& matrix) {
+  const auto m = matrix.size();
+  const auto n = matrix[0].size();
+  
+  auto row_zero = vector<bool>(m, false);
+  auto col_zero = vector<bool>(n, false);
+  
+  for (int r = 0; r < m; ++r)
+    for (int c = 0; c < n; ++c)
+      if (matrix[r][c] == 0)
+        row_zero[r] = col_zero[c] = true;        
+  for (int r = 0; r < m; ++r)
+    for (int c = 0; c < n; ++c)
+      if (row_zero[r] || col_zero[c])
+        matrix[r][c] = 0;
+}
+	\end{lstlisting}
+	\subsubsection{$O(1)$ space complexity}
+	\begin{lstlisting}
+void setZeroes(vector<vector<int>>& matrix) {
+  const auto m = matrix.size();
+  const auto n = matrix[0].size();
+  //col0 plus matrix[0][1..n - 1] handle columns
+  //matrix[0..m-1][0] handle rows
+  int col0 = matrix[0][0];
+  
+  for (int r = 0; r < m; ++r)
+  {
+    //Handling column 0:
+    if (matrix[r][0] == 0)
+      col0 = 0;
+    // We start from c = 1 to handle 
+    // rows 0 to m - 1 and columns 1 to n - 1
+    for (int c = 1; c < n; ++c)
+      if (matrix[r][c] == 0)
+        matrix[r][0] = matrix[0][c] = 0;
+  }
+  // We start from m - 1 to 0 to avoid resetting
+  // The first row too soon. As an example:
+  // 0 1
+  // 1 1
+  // If we start first from r = 0, all elements of the first row
+  // become zero, so the entire elements would become zero
+  for (int r = m - 1; r >= 0; --r)
+  {
+    // We handle c = 0 later
+    for (int c = 1; c < n; ++c)
+      if (matrix[r][0] == 0 || matrix[0][c] == 0)
+        matrix[r][c] = 0;
+    
+    if (matrix[r][0] == 0 || col0 == 0)
+      matrix[r][0] = 0;
+  }
+}
+	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
