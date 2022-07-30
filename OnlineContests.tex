@@ -1521,6 +1521,64 @@ bool is_painted()
   return true;
 }
 	\end{lstlisting}
+	\section{Average of last $k$ numbers}
+	Suppose we have a list of integers of size $n$. We want to calculate the average of the last $k$ numbers. You should define two functions $insert$ and $average$. The former is called $n$ times. The latter can be called arbitary. The running time of both function should be $O(1)$ and the memory complexity shouldn't be higher than $O(k)$.
+	\par To calculate the sum of the last $k$ numbers in real time, first we initialize the array with 0. Before inserting the new value, we subtract the current value from sum and then add the new value to sum:
+	\begin{lstlisting}
+class List
+{
+public:
+  List(std::size_t size): size{size},
+    numbers{std::vector<int>(size, 0)},
+    begin{0},
+    end{0},
+    sum{0} {}
+
+  void insert(int val)  //O(1)
+  {
+    sum -= numbers[end];
+    sum += val;
+    numbers[end] = val;
+    end = (end + 1) % size;
+    if (end == begin)
+      begin = (begin + 1) % size;
+  }
+
+  double average()  //O(1)
+  {
+    auto cur_size = end > begin ? end - begin : size;
+    return static_cast<double>(sum) / cur_size;
+  }
+private:
+  std::size_t size, begin, end;
+  std::vector<int> numbers;
+  int sum;
+};
+
+void test1()
+{
+  std::vector<int> numbers{1, 2, 3, 4};
+  auto l = List(1);
+  for (const auto val : numbers)
+    l.insert(val);
+  assert(l.average() == 4);
+}
+
+void test2()
+{
+  std::vector<int> numbers{1, 2, 3, 4};
+  auto l = List(2);
+  for (const auto val : numbers)
+    l.insert(val);
+  assert(l.average() == 3.5);
+}
+
+int main()
+{
+  test1();
+  test2();
+}
+	\end{lstlisting}
 	\appendix
 	\chapter{C++ refresher}
 	\section{\href{https://en.cppreference.com/w/cpp/utility/tuple}{std::tuple}}
