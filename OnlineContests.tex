@@ -1872,7 +1872,7 @@ int main()
 }
 	\end{lstlisting}
 	\section{\href{https://en.cppreference.com/w/cpp/container/array}{std::array}}
-	Note that if you don't use ${}$, both std::array and c-style array are not initialized when you are using primitive type. So they can have arbitrary values.
+	Note that if you don't use $\{\}$, both std::array and c-style array are not initialized when you are using primitive type. So they can have arbitrary values.
 	\begin{lstlisting}
 #include <iostream>
 #include <array>
@@ -1882,11 +1882,11 @@ int main()
 
 int main()
 {
-  // a1 members are not initialized:
+  // a members are not initialized:
   // std::array<int, 7> a;
   // c_a members are not initialized:
   // int c_a[7];
-  //a2 members are initialized to default:
+  //a1 members are initialized to default:
   std::array<int, 7> a1{};
   // c_a1 members are initiliazed to default:
   int c_a1[7] {};
