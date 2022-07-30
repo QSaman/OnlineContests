@@ -545,8 +545,9 @@ int search(vector<int>& nums, int target) {
 }
 	\end{lstlisting}
 	\subsection{\href{https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/}{Find First and Last Position of Element in Sorted Array}}
+	\label{ref:find_first_and_last_position_of_element_in_sorted_array}
 	Given an array of integers $nums$ sorted in non-decreasing order, find the starting and ending position of a given $target$ value.
-	\par We define $f(i, j)$ that has the index of left-most $target$ in $nums[i..j]$. On the other hand we define $g(i, j)$ that keeps the index of the right-most $target$ in $nums[i..j]$. 
+	\par Refer to \ref{ref:search_a_2d_matrix} for a another variation of this problem. We define $f(i, j)$ that has the index of left-most $target$ in $nums[i..j]$. On the other hand we define $g(i, j)$ that keeps the index of the right-most $target$ in $nums[i..j]$. 
 	\par Let's assume $mid$ is index of the middle element. Both $f$ and $g$ acts similarly when $nums[mid] < target$ or $nums[mid] > target$. Let's assume $nums[mid] = target$. Since $f$ should choose the left-most target, it tries to find the answer in $nums[0..mid]$. There is a possibly that other elements with value $target$ exists in $nums[0..mid]$. On the other hand, $g$ should find the rightmost $target$. So it chooses $nums[mid..n - 1]$.
 	\par We assume $mid_f = \lfloor \frac{left + right}{2} \rfloor$:
 	\begin{equation*}
@@ -1144,6 +1145,82 @@ void setZeroes(vector<vector<int>>& matrix) {
     if (matrix[r][0] == 0 || col0 == 0)
       matrix[r][0] = 0;
   }
+}
+	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/search-a-2d-matrix/}{Search a 2D Matrix}}
+	Given a 2D array $rows \times columns$. Each row is sorted in non-descendaing order. The first element of the next row is greater than the last element in current row.
+	\label{ref:search_a_2d_matrix}
+	\par For a similar problem reft to \ref{ref:find_first_and_last_position_of_element_in_sorted_array}.
+	\subsubsection{Method 1}
+	We define $r(t, b)$ that knows in which row the target is located. Similarly we define $c(l, r)$ that knows in which column the target is located. Both $r$ and $c$ are defined like $f$ in \ref{ref:find_first_and_last_position_of_element_in_sorted_array}. We assume $m_r = \lfloor \frac{t + b}{2} \rfloor$:
+	\begin{equation*}
+		r(t, b) = \begin{cases}
+			r(t, m_r) & target \le matrix[m_r, columns - 1] \\
+			r(m_r + 1, b) & target > matrix[m_r, columns - 1] \\
+			m_r & matrix[m_r][0] \le target \le matrix[m_r][columns - 1]
+		\end{cases}
+	\end{equation*}
+	Let's assume $q = r(0, rows - 1)$ and $m_c = \lfloor \frac{l + r}{2} \rfloor$:
+	\begin{equation*}
+		c(l, r) = \begin{cases}
+			c(l, m_c) & target \le matrix[q, m_c] \\
+			c(m_c + 1, r) & target > matrix[q, m_c] \\
+			m_c & l = r \land target = matrix[q, m_c]
+		\end{cases}
+	\end{equation*}
+	\begin{lstlisting}
+bool searchMatrix(vector<vector<int>>& matrix, int target) {
+  const auto rows = matrix.size();
+  const auto cols = matrix[0].size();
+  int top_r = 0, bottom_r = rows - 1;
+  while (top_r < bottom_r)
+  {
+    auto mid = (top_r + bottom_r) / 2;
+    if (target <= matrix[mid][cols - 1])
+      bottom_r = mid;
+    else
+      top_r = mid + 1;
+  }
+  int left = 0, right = cols - 1;
+  while (left < right)
+  {
+    auto mid = (left + right) / 2;
+    if (target <= matrix[bottom_r][mid])
+      right = mid;
+    else
+      left = mid + 1;
+  }   
+  return matrix[bottom_r][right] == target;
+}
+	\end{lstlisting}
+	\subsubsection{Method 2}
+	We consider $matrix[0..rows - 1][0..columns - 1]$ as a one dimentional matrix $g[0..rows * columns - 1]$:
+	\begin{lstlisting}
+bool searchMatrix(vector<vector<int>>& matrix, int target) {
+  const auto rows = matrix.size();
+  const auto cols = matrix[0].size();
+  const auto extract_row_col = [rows, cols](int index)
+  {
+    int row = index / cols;
+    int col = index % cols;
+    return make_tuple(row, col);
+  };
+  int left = 0, right = rows * cols - 1;
+  //Since we compare for equality inside the loop,
+  //we use <= instead of < operator:
+  while (left <= right)
+  {
+    auto mid = (left + right) / 2;
+    int r, c;
+    tie(r, c) = extract_row_col(mid);
+    if (target == matrix[r][c])
+      return true;
+    else if (target < matrix[r][c])
+      right = mid - 1;
+    else
+      left = mid + 1;
+  }
+  return false;
 }
 	\end{lstlisting}
 	\chapter{HackerRank}
