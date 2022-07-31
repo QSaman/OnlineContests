@@ -1223,6 +1223,68 @@ bool searchMatrix(vector<vector<int>>& matrix, int target) {
   return false;
 }
 	\end{lstlisting}
+	\subsection{\href{https://leetcode.com/problems/combinations/}{Combinations}}
+	Given two integers $n$ and $k$, return all possible combinations of k numbers out of the range $[1, n]$.
+	\par We can use mathmatical induction. Suppose we know the answer $c(n, m)$ for $m < k$ and for all possible $n$. $m = 1$ is trivial. Now consider $c(n, k)$. We use the hypothesis and find all the answers for $c(n - 1, k - 1)$. The maximum element in each of these combination is no more than $n - 1$, so we can easily extend them to $k$ elements.
+	\subsubsection{Recursion}
+	The tricky part is the range of valid numbers in each depth in recursive tree. Let's say $c = [n_{i_0}, \dots, n_{i_{k -1}}]$ is an arbitrary combination. $depth_j$ is responsible to find $n_{i_j}$. After $n_{i_j}$, we should find $n_{i_{j + 1}}$ to $n_{i_{k - 1}}$. So there are $(k - 1) - (j + 1) + 1 = k - j - 1$ reamining elements. So $n_{i_j} + k - j - 1 \le n \implies n_{i_j} \le n - k + j + 1$
+	\begin{lstlisting}
+class Solution {
+  public:
+  void f(int start, int depth)
+  {
+    if (depth == k)
+    {
+      res.push_back(cur);
+      return;
+    }
+    for (int i = start; i <= (n - k + depth + 1); ++i)
+    {
+      cur[depth] = i;
+      f(i + 1, depth + 1);
+    }
+  }
+  vector<vector<int>> combine(int n, int k) {
+    res.clear();
+    cur = vector<int>(k);
+    this->n = n;
+    this->k = k;
+    f(1, 0);
+    return res;
+  }
+  vector<vector<int>> res;
+  vector<int> cur;
+  int n, k;
+};
+	\end{lstlisting}
+	\subsubsection{Iterative}
+	Suppose we are in $i$ step. After $i$ there are $k - 1 - (i + 1) + 1 = k - i - i$ remaining elements. So we have $c[i] + k - i + 1 \le n \implies c[i] \le n - k + i + 1$:
+	\begin{lstlisting}
+vector<vector<int>> combine(int n, int k) {
+  vector<int> c(k);
+  vector<vector<int>> res;
+  int i = 0;
+  c[0] = 0;
+  while (i >= 0)
+  {
+    if (i == k)
+    {
+      res.push_back(c);
+      --i;
+    }
+    else if (c[i] < n - k + i + 1)
+    {
+      ++c[i];
+      if (i + 1 < k)
+        c[i + 1] = c[i];
+      ++i;
+    }
+    else
+      --i;
+  }
+  return res;
+} 
+	\end{lstlisting}
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
