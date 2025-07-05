@@ -1285,6 +1285,29 @@ vector<vector<int>> combine(int n, int k) {
   return res;
 } 
 	\end{lstlisting}
+	\section{Hard}
+	\subsection{\href{https://leetcode.com/problems/longest-valid-parentheses/description/}{Longest Valid Parentheses}}
+	Given a string containing just the characters '(' and ')', return the length of the longest valid (well-formed) parentheses substring.
+	\subsubsection{Dynamic programming approach}
+	Let's assume $s$ is the string and $dp[i]$ is the length of maximum valid parentheses that ends with $s[i]$. We use mathematical induction. We assume we know the answers for all $s$ with length less than $i$ and now we want to find the answer for all strings of length $i$. There are two cases that we need to consider:
+	\begin{equation*}
+		dp[i] = \begin{cases}
+			dp[i - 2] + 2 & s[i] = \text{)} \land s[i - 1] = \text{(} \\
+			dp[i - 1] + 2 + dp[i - dp[i - 1] - 2] & s[i] = \text{)} \land s[i - 1] = \text{)} \land s[i - dp[i - 1] - 1] = \text{(} \\
+			0 & i \le 0
+		\end{cases}
+	\end{equation*}
+	An example of the first case is $"()()"$ and an example of the second case is $"(())"$.
+	\subsubsection{Stack approach}
+	We assume the bottom of stack keeps the index of the last unmatched $")"$. The rest are all unmatched $"("$. For simplicity we assume all strings has a $")"$ at index $-1$. Here is the algorithm:
+	\begin{itemize}
+		\item If $s[i] = ($, then we add it on top of the stack
+		\item If $s[i] = )$, then we can match it to the last unmatched $"("$ which may be on top of the stack. For doing that first we pop the last element from the stack:
+		\begin{itemize}
+			\item If the stack is empty, then it means that there is no more $"("$ and we popped the last unmatched $")"$ so we need to insert the index of the current unmatched $")"$ into the stack. Please not that the the bottom element of the stack should always be the index of the last unmatched $")"$
+			\item If the stack is non-empty, then it means that the element that we popped was the last unmatched $"("$. We need to check the difference between $s[i]$ and the index of the top element of stack with the current answer
+		\end{itemize}
+	\end{itemize}
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
