@@ -1308,6 +1308,16 @@ vector<vector<int>> combine(int n, int k) {
 			\item If the stack is non-empty, then it means that the element that we popped was the last unmatched $"("$. We need to check the difference between $s[i]$ and the index of the top element of stack with the current answer
 		\end{itemize}
 	\end{itemize}
+	\subsubsection{Two-pass linear scan}
+	Let's assume we want to find the longest valid parentheses in $s[0..n]$. Let's assume $s[i..j]$ is a non-extendable valid parentheses for $i > 0 \land j < n \land i < j$. We need to consider 4 cases:
+	\begin{enumerate}
+		\item $(s[i..j])$: This is in contrast that $s[i..j]$ is non-extendable. Because $(s[i..j])$ is a valid and longer parentheses
+		\item $(s[i..j]($: The first and last open parentheses should remain unmatched. Otherwise, $s[i..j]$ is extendable
+		\item $)s[i..j])$: The first and last open parentheses should remain unmatched. Otherwise, $s[i..j]$ is extendable
+		\item $)s[i..j]($: The first and last open parentheses should remain unmatched. Otherwise, $s[i..j]$ is extendable
+	\end{enumerate}
+	We know that in a valid parentheses, the number of left and right ones are equal. To solve cases 3 and 4 we need to start scaning $s$ from left to right and start counting left and right ones. If they are equal, it's a potential answer. If the number of right parentheses is more than left, we find an umatched right parenthesis so we should reset both left and right. This phase can detect solutions for case 3 and 4.
+	\par For detecting case 2, We need to scan from right to left. If the number of left and right parentheses are equal, then it's a potential solution. If the number of left parentheses is greater than right, then we find an unmathced left parenthesis, so we should reset the counters.
 	\chapter{HackerRank}
 	\section{\href{https://www.hackerrank.com/challenges/new-year-chaos/problem}{New Year Chaos}}
 	 We define $index_i$ as the current index for person $i$. For example if we have $1, 2, 3, 4$ and $4$ bribes $3$, the queue looks like $1, 2, 4, 3$. So $index_4 = 3$. Since no body can bribe more than 2 times, $index_i \ge i - 2$ for $1 \le i \le n$. Consider person $n$. No body can bribe that person. So $n - 2 \le index_n \le n$. After we retruned that person to his actual place we can consider $n - 1$. So we have $n - 3 \le index_{n - 1} \le n - 1$ (note that at this moment $index_n = n$).
