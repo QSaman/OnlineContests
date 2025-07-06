@@ -1,5 +1,8 @@
 // https://leetcode.com/problems/valid-parentheses/description/
 #include <stack>
+#include <string>
+
+using namespace std;
 
 class Solution {
 public:
