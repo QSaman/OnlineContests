@@ -3,7 +3,7 @@
 // Let's assume s[0..5] = "abcdce"
 // Let's say the sliding window is s[0..3] = "abcd" . the next sliding window is s[0..4] = "abcdc" 
 // which is not valid. Therefore the next sliding window should be s[3..5] = "dce". As you can see
-// the right is always increses by 1, so we only need to have one for loop
+// the right always increses by 1, so we only need to have one for loop
 
 #include <unordered_map>
 #include <algorithm>
