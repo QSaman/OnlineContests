@@ -2090,4 +2090,70 @@ int main()
     assert(val[0] == 0x01010101 && val[1] == 0x01010101);
 }
 	\end{lstlisting}
+	\section{Hash combine}
+	STL doesn't offer hash for containers. We need to consdier this fact that the following criterea:
+	\begin{enumerate}
+		\item The order of elements are important
+		\item The values of the lements are important
+	\end{enumerate}
+	
+	For example if we have a class with two attributes name and family, it's not a good idea to concatnate them and create a hash from it. For example if we have $name=foo$ and $family=bar$, then all of the following values have the same hash:
+	\begin{itemize}
+		\item name=foo, family=bar
+		\item name=f, family=oobar
+		\item name=fo, family=obar
+		\item name=foob, family=ar
+		\item ...
+	\end{itemize}
+	It's not a good idea to use operators that are \textbf{commutative} (e.g. $a \oplus b = b \oplus a$) or \textbf{associative} (e.g. $a \oplus (b \oplus c) = (a \oplus b) \oplus c$). Otherwise it's not a good distribution and the likelihood of collision is high. Both XOR and addition are commutative, but usually we use XOR because it's faster. An easy hash function in C++ can be
+	\begin{lstlisting}
+// Custom hash can be a standalone function object.
+struct MyHash
+{
+	std::size_t operator()(const S& s) const noexcept
+	{
+		std::size_t h1 = std::hash<std::string>{}(s.first_name);
+		std::size_t h2 = std::hash<std::string>{}(s.last_name);
+		return h1 ^ (h2 << 1); // or use boost::hash_combine
+	}
+};
+	\end{lstlisting}
+	For more information please refer to \href{https://en.cppreference.com/w/cpp/utility/hash.html}{std::hash}.
+	\par  since XOR is commutative, it's not order-sensitive so we should combine it with other operators. $boost::hash_combine$ uses the following \href{https://www.boost.org/doc/libs/1_55_0/doc/html/hash/reference.html#boost.hash_combine}{formula}:
+	\begin{lstlisting}
+template<typename T> void hash_combine(size_t & seed, T const& v)
+{
+	seed ^= hash_value(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+}		
+	\end{lstlisting}
+	
+	$0x9e3779b9$ or $2654435769$ in decimal is golden ratio. It's calculated:
+	\begin{equation*}
+		\begin{split}
+			\varphi &= \frac{1 + \sqrt{5}}{2} \\
+			&\approxeq 1.61803398875
+		\end{split}
+	\end{equation*}
+	
+	So the golden ratio is
+	\begin{equation*}
+		\frac{2^{32}}{\varphi} = 2654435769.5
+	\end{equation*}
+	
+	I used hash combine formuala for \href{https://leetcode.com/problems/group-anagrams/description/}{this question}
+	\begin{lstlisting}
+template<>
+struct hash<array<int, 26>>
+{
+	size_t operator()(const array<int, 26>& v) const
+	{
+		size_t h = 0;
+		for (const auto& item : v)
+		h ^= hash<int>{}(item) + 0x9e3779b6 + (h << 6) + (h >> 2);
+		return h;
+	}
+};
+unordered_map<array<int, 26>, vector<string>> anagram;		
+	\end{lstlisting}
+	
 \end{document}
