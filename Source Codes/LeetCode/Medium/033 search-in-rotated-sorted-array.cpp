@@ -1,7 +1,12 @@
 // https://leetcode.com/problems/search-in-rotated-sorted-array/description/
 
 // In rotated sorted array either the left half or the right half is sorted. We use this fact
-// to find the target in O(logn)
+// to find the target in O(logn):
+//
+// if (nums[left] < nums[mid] < nums[right]): all array is sorted
+// if (nums[left] < nums[mid] > nums[right]): The left half is sorted
+// if (nums[left] > nums[mid] < nums[right]): The right half is sorted
+// if (nums[left] > nums[mid] > nums[right]): invalid. At least one half should be sorted
 
 #include <vector>
 

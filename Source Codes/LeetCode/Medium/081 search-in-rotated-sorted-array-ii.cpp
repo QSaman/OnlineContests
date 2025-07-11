@@ -1,11 +1,19 @@
 // https://leetcode.com/problems/search-in-rotated-sorted-array-ii/
 
-// In a rotated sorted array either the left half or the right half is sorted. Because there may 
-// be duplication, there are cases that we don't know which half is sofrted. For example:
-// [1, 0, 1, 1, 1] or [1, 1, 1, 0, 1]. However in [1, 1, 0, 1, 1] the right half is sorted. In genral:
-// if (nums[left] == nums[right] && nums[mid] < nums[right]): The right half is sorted
-// if (nums[left] == nums[right] && nums[mid] > nums[left]): The left half is sorted
-// if (nums[left] == nums[right] && nums[mid] == nums[left]): Either left or right half is sorted
+// if (nums[left] == nums[mid] == nums[right]): Either left or right half is sorted
+// if (nums[left] == nums[mid] < nums[right]): The entire array is sorted
+// if (nums[left] == nums[mid] > nums[right]): The left half is sorted
+// if (nums[left] < nums[mid] == nums[right]): The entire array is sorted
+// if (num[left] < nums[mid] < nums[right]): The entire array is sorted
+// If (nums[left] < nums[mid] > nums[right]): The left half is sorted
+// if (nums[left] > nums[mid] == nums[right]): The right half is sorted
+// if (nums[left] > nums[mid] < nums[right]): The right half is sorted
+// if (nums[left] > nums[mid] > nums[right]): Invalid: because at least one half should be sorted
+//
+// We can simply if as:
+// if (nums[left] == nums[mid] == nums[right]): Either left or right half is sorted
+// else if (nums[left] <= nums[mid]): The left half is sorted
+// else: The right half is sorted
 
 #include <vector>
 
