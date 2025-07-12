@@ -6,3 +6,4 @@
 * [154. Find Minimum in Rotated Sorted Array II](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/description/): [solution](Hard/154%20find-minimum-in-rotated-sorted-array-ii.cpp)
 * [162. Find Peak Element](https://leetcode.com/problems/find-peak-element/description/): [solution](Medium/162.%20Find%20Peak%20Element.cpp)
 * [74. Search a 2D Matrix](https://leetcode.com/problems/search-a-2d-matrix/description/): [solution 1](Medium/74%20search-a-2d-matrix/m_multiply_n.cpp) which is the expected answer. A faster [solution 2](Medium/74%20search-a-2d-matrix/m_plus_n.cpp) also exists.
+* [240. Search a 2D Matrix II](https://leetcode.com/problems/search-a-2d-matrix-ii/description/): [faster solution](Medium/240%20Search%20a%202D%20Matrix%20II/m_plus_n.cpp). [Slower solution](Medium/240%20Search%20a%202D%20Matrix%20II/m_log_n.cpp)
