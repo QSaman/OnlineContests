@@ -1,7 +1,10 @@
 // This is O(m + n) approach. The key element here is to start either
-// from matrix[m - 1][0] or from matrix[0][n - 1] so in each
-// step either a row or col is elimianted. Because these cells are
-// both min and max in their column or row
+// from matrix[m - 1][0] or from matrix[0][n - 1] so in each step
+// either a row or col is elimianted. Please note that in binary
+// search, the middle element is the max element in the left half
+// and min element in the right half. It's the same principal here
+// matrix[m - 1][0] is min element in the last row and it's max
+// element in the first column. A similar argument for matrix[0][n - 1]
 
 #include <vector>
 
