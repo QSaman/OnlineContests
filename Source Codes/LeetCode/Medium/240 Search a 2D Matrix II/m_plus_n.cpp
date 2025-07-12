@@ -1,6 +1,7 @@
 // This is O(m + n) approach. The key element here is to start either
 // from matrix[m - 1][0] or from matrix[0][n - 1] so in each
-// step either a row or col is elimianted
+// step either a row or col is elimianted. Because these cells are
+// both min and max in their column or row
 
 #include <vector>
 
