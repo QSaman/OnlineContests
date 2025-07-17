@@ -1752,6 +1752,111 @@ int main()
 }
 	\end{lstlisting}
 	\appendix
+	\chapter{Algorithms}
+	\section{Dynamic Programming}
+	\subsection{\href{https://en.wikipedia.org/wiki/Knapsack_problem}{Knapsack problem}}
+	Given a set of items, each with a weight and a value, determine which items to include in the collection so that the total weight is less than or equal to a given limit and the total value is as large as possible.
+	\subsubsection{0-1 Knapsack}
+	In this variation an item can only be taken once or not. More precisely, given a set of $n$ items numbered from $1$ to $n$, each with a weight $w_i$ and a value $v_i$, along with a maximum weight capacity $W$. We want to maximize $\sum_{i = 1}^{n}{v_i \times x_i}$	subject to $\sum_{i = 1}^{n}{v_i \times x_i} \le W \land x_i \in \{0, 1\}$.
+	\par Here $x_i$ represents the number of instances of item $i$ to include in the knapsack. Informally, the problem is to maximize the sum of the values of the items in the knapsack so that the sum of the weights is less than or equal to the knapsack's capacity.
+	\par To solve this problem we assume $dp_{i, j}$ is the maximum result using the first $i$ items that are indexed from $0$ to $i - 1$ with $W = j$. We started index from $0$ because it's eaiser to implement it in a programming language like C++
+	\begin{equation*}
+		dp_{i, j} = \begin{cases}
+			max(dp_{i - 1, j}, dp_{i - 1, j - w_{i - 1}} + v_{i - 1}) & j \ge w_{i - 1} \\
+			dp_{i - 1, j} & j < w_{i - 1} \\
+			0 & i = 0 \lor j = 0
+		\end{cases}
+	\end{equation*}
+	For implementation we can optimize the memory usage. There is no need to have a two-dimenstional array for $dp$. For calculating $dp_{i, j}$, we need to refer to ${i - 1}^\text{th}$ row. Let's define $dp[j]$ which has the maximum result for $0 \le j \le W$ for the first $i - 1$ items. Now we want to update it for the first $i$ items. Please note that it's very important the update should be done from \textbf{right to left}. Otherwise, it's not equvalent to above formula.
+	\begin{lstlisting}
+int knapsack(const vector<int>& w, const vector<int>& v, int W)
+{
+	vector<int> dp(W + 1, 0);
+	for (size_t i = 0; i < w.size(); ++i)
+	  for (size_t j = W; j >= w[i]; --j) // From right to left
+	    dp[j] = max(dp[j], dp[j - w[i]] + v[i]);
+	return dp[W];
+}		
+	\end{lstlisting}
+	The time complexity is $O(n \times W)$ and memory complexity is $O(W)$. $n$ is the number of items and $W$ is weight capacity.
+	\subsubsection{Unbounded Knapsack (UKP)}
+	It places no upper bound on the number of copies of each kind of item. More preceisely, we want to maximize $\sum_{i=1}^{n}{v_i \times x_i}$ subject to $\sum_{i=1}^{n}{w_i \times x_i \le W} \land x_i \in \mathbf{N}$.
+	\par Let's define $dp_{i, j}$ like the one that we defined for 0-1 Knapsack. It has the maximum result from the first $i$ items that are indexed from $0$ to $i - 1$:
+	\begin{equation*}
+		dp_{i, j} = \begin{cases}
+			\max(dp_{i - 1, j}, dp_{i, j - w_{i - 1}} + v_{i - 1}) & j \le w_{i - 1} \\
+			dp_{i - 1, j} & j > w_{i - 1} \\
+			0 & i = 0 \lor j = 0
+		\end{cases}
+	\end{equation*}	
+	Like 0-1 knapsack, we can optmize the memory usage. We define $dp[j]$ that has the maximum result for $0 \le j \le W$ for the first $i - 1$ items, we want to update it for the first $i$ items. In the the above formula, $dp_{i, j}$ access an element in the $i - 1^\text{th}$ row or an element in the left side of the current row. \textbf{Unlike the 0-1 knapsack}, it's important that we update from \textbf{left to right}.	
+	\begin{lstlisting}
+int knapsack(const vector<int>& w, const vector<int>& v, int W)
+{
+	vector<int> dp(W + 1, 0);
+	for (size_t i = 0; i < w.size(); ++i)
+	  for (size_t j = w[i]; j <= W; ++j) // From left to right
+	    dp[j] = max(dp[j], dp[j - w[i]] + v[i]);
+	return dp[W];
+}
+	\end{lstlisting}
+	The only difference between this implementation and 0-1 knapsack is \textbf{the inner loop is from left to right!}
+	\par The time complexity is $O(n \times W)$ and memory complexity is $O(W)$. $n$ is the number of items and $W$ is weight capacity.	
+	\subsubsection{Bounded Knapsack (BKP)}
+	It removes the restriction that there is only one of each item, but restricts the number$x_i$ of copies of each kind of item to a maximum non-negative integer value $c$. More precisely, we want to maximize $\sum_{i=1}^{n}{v_i \times x_i}$ subject to $\sum_{i=1}^{n}{w_i \times x_i \le W} \land x_i \in \{0, 1, 2, \dots, c_i\}$.
+	\par Let's define $dp_{i, j}$ like the one that we defined for 0-1 Knapsack. It has the maximum result from the first $i$ items that are indexed from $0$ to $i - 1$:
+	\begin{equation*}
+		dp_{i, j} = \begin{cases}
+			\max_{k = 1}^{c_{i - 1}}{(dp_{i - 1, j}, dp_{i - 1, j - k \times w_{i - 1}} + k \times v_{i - 1})} & j \ge k \times w_{i - 1} \\
+			dp_{i - 1, j} & j < w_{i - 1} \\
+			0 & i = 0 \lor j = 0
+		\end{cases}
+	\end{equation*}
+	Like 0-1 knapsack, we can optmize the memory usage. We define $dp[j]$ that has the maximum result for $0 \le j \le W$ for the first $i - 1$ items, we want to update it for the first $i$ items. In the the above formula, $dp_{i, j}$ access an element in the $i - 1^\text{th}$. \textbf{Like the 0-1 knapsack}, it's important that we update from \textbf{right to left}.
+	\begin{lstlisting}
+int knapsack(const vector<int>& w, const vector<int>& v, const vector<int>& c, int W)
+{
+	vector<int> dp(W + 1, 0);
+	for (size_t i = 0; i < w.size(); ++i)
+	  for (size_t j = W; j >= w[i]; --j) // From right to left
+	    for (size_t k = 1; k <= c[i] && j >= (k * w[i]); ++k)
+	      dp[j] = max(dp[j], dp[j - k * w[i]] + k * v[i]);
+	return dp[W];
+}
+	\end{lstlisting}
+	The time complexity is $O(n \times W \times C)$. $n$ is the number of items. $W$ is the weight capacity. $C=\max_{i = 0}^{n - 1}{c_i}$. The memory complexity is $O(W)$.
+	\subsubsection{Bounded Kanspack through binary decomposition}
+	As explaind in previous seciton, $O(n \times W \times C)$ is slow. We can improve bounded knapsack solution using binary decomposition and convert the problem into 0-1 knapsack.
+	\par By looking at $\max_{k = 1}^{c_{i - 1}}{(dp_{i - 1, j}, dp_{i - 1, j - k \times w_{i - 1}} + k \times v_{i - 1})}$, we can realize that it's similair to 0-1 knapsack if we break iterm $i - 1$ into $c_{i - 1}$ items such as $w_{j}^{\prime} = j \times w_{i - 1}$ and $v_{j}^{\prime} = j \times v_{i -1}$ for all $1 \le j \le c_{i - 1}$.
+	\par Instead of breaking item $i - 1$ into $c_{i - 1}$ items, we can break it into $\lfloor\log_2(c_{i - 1})\rfloor$.
+	\par Let's assume $s_k = \sum_{i =0}^{k}{2^i}$. Let's say $S = s_k$ in such a way that $s_{k + 1} > c_{i - 1}$. With $b_k \times 2^k + b_{k - 1} \times 2^{k - 1}\dots b_1 \times 2 + b_0$ assuming $b \in \{0 , 1\}$ we can create all numbers that are less than or equal to $S$. Let's assume $r = c_{i - 1} - S$. Let's consider $S + q$ for $1 \le q \le r$ copies of item $i - 1$ is required to get the maximum solution. Since $S + q - r \le S$, we can create it using $b_k \times 2^k + \dots + b_0$. Then we add $r$ to it to create $S + q$.
+	\par For example for $c_{i - 1} = 10$, we have $10 = 1 + 2 + 4 + 3$. Note that we shouldn't add 8 to the set because it's possible we exceed $10$.
+	\begin{lstlisting}
+int knapsack(const vector<int>& w, const vector<int>& v, const vector<int>& c, int W)
+{
+	vector<int> dp(W + 1, 0);
+	for (size_t i = 0; i < w.size(); ++i)
+	{
+		int r = c[i];
+		for (int k = 1; k <= r; r -= k, k << 1)
+		{
+			int new_w = w[i] * k;
+			int new_v = v[i] * k;
+			for (int j = W; j >= new_w; --j) // from right to left
+			dp[j] = max(dp[j], dp[j - new_w] + new_v);
+		}
+		if (r > 0)
+		{
+			int new_w = w[i] * r;
+			int new_v = v[i] * r;
+			for (int j = W; j >= new_w; --j) // from right to left
+			dp[j] = max(dp[j], dp[j - new_w] + new_v);
+		}
+	}
+	return dp[W];
+}
+	\end{lstlisting}
+	The time complexity is $O(n \times W \times \log_2{C})$. $n$ is the number of items. $W$ is the weight capacity. $C=\max_{i = 0}^{n - 1}{c_i}$. The memory complexity is $O(W)$.
 	\chapter{C++ refresher}
 	\section{\href{https://en.cppreference.com/w/cpp/utility/tuple}{std::tuple}}
 	
