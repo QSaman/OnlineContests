@@ -12,6 +12,7 @@
 * [198. House Robber](https://leetcode.com/problems/house-robber/description/): [solution](Medium/198%20House%20Robber.cpp)
 * [213. House Robber II](https://leetcode.com/problems/house-robber-ii/description/): [solution](Medium/213%20House%20Robber%20II.cpp)
 * [740. Delete and Earn](https://leetcode.com/problems/delete-and-earn/description/): [Solution using unique](Medium/740%20Delete%20and%20Earn/unique.cpp). [Solution using sum](Medium/740%20Delete%20and%20Earn/sum.cpp)
+* [300. Longest Increasing Subsequence](https://leetcode.com/problems/longest-increasing-subsequence/description/): [solution 1](Medium/300%20Longest%20Increasing%20Subsequence/squared_n_solution.cpp) [solution 2](Medium/300%20Longest%20Increasing%20Subsequence/n_log_n_solution.cpp)
 
 ## Knapsack variants
 * [416. Partition Equal Subset Sum](https://leetcode.com/problems/partition-equal-subset-sum/description/): [Solution](Medium/416%20partition-equal-subset-sum.cpp)
